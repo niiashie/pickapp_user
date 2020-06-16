@@ -7,5 +7,6 @@ class AppRoutes {
   static const String dashboardRoute = "dashboardRoute";
   static const String splashScreenRoute = "splashScreenRoute";
   static const String newOrderScreenRoute = "newOrderScreenRoute";
-
+  static const String placesSearchScreenRoute = "placesSearchScreenRoute";
+  static const String orderSummaryScreenRoute = "orderSummaryScreen";
 }

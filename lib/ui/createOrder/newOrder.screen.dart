@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pickappuser/config/locator.dart';
+import 'package:pickappuser/constants/app_constants.dart';
 import 'package:pickappuser/models/recipient_item.dart';
 import 'package:pickappuser/providers/newOrder.provider.dart';
 import 'package:pickappuser/services/router.service.dart';
@@ -21,9 +22,6 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
     final vm = Provider.of<NewOrderProvider>(context);
      double device_width = MediaQuery.of(context).size.width;
      double device_height = MediaQuery.of(context).size.height;
-
-
-
 
 
     final firstPageIndicator = PageIndicator();
@@ -73,6 +71,10 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                         margin: EdgeInsets.only(left:10,right: 10,top: 15),
                         child: MyTextInputField(
                           label: "Carrier Type",
+                           readOnly: true,
+                          controller: vm.carrierTypeCtrl,
+                          error: vm.carrierTypeError,
+                          errorText: AppConstants.carrierTypeError,
                           onTap: (){
                             vm.getCarrierTypes(context);
                           },
@@ -83,6 +85,13 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                         margin: EdgeInsets.only(left:10,right: 10,top: 10),
                         child: MyTextInputField(
                           label: "Package Size",
+                          readOnly: true,
+                          error:vm.packageSizeError,
+                          errorText: AppConstants.packageSizeError,
+                          controller: vm.packageSizeCtrl,
+                          onTap: (){
+                            vm.getPackageSizes(context);
+                          },
                         ),
                       ),
                       Container(
@@ -90,6 +99,10 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                         margin: EdgeInsets.only(left:10,right: 10,top: 10),
                         child: MyTextInputField(
                           label: "Package Quantity",
+                          textEntryType: TextInputType.number,
+                          error:vm.packQuantityError,
+                          errorText: AppConstants.packageQuantityError,
+                          controller: vm.packageQuantityCtrl,
                         ),
                       ),
                       Container(
@@ -120,6 +133,9 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                         child: MyTextInputField(
                           label: "Item Description",
                           maxlines: 3,
+                          errorText: AppConstants.itemDescriptionError,
+                          error: vm.itemDescriptionError,
+                          controller: vm.itemDescriptionCtrl,
                         ),
                       ),
                       Container(
@@ -234,6 +250,9 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                       margin: EdgeInsets.only(left:10,right: 10,top: 10),
                       child: MyTextInputField(
                         label: "Full Name",
+                        controller: vm.senderFullNameCtrl,
+                        error: vm.senderFullNameError,
+                        errorText: AppConstants.fullNameError,
                       ),
                     ),
                     Container(
@@ -242,6 +261,9 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                       child: MyTextInputField(
                         label: "Phone",
                         textEntryType: TextInputType.phone,
+                        controller: vm.senderPhoneCtrl,
+                        errorText: AppConstants.phoneError,
+                        error: vm.senderPhoneNumberError,
                       ),
                     ),
                     Container(
@@ -256,7 +278,14 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                       child: MyTextInputField(
                         label: "Pickup Location",
                         textEntryType: TextInputType.text,
+                        readOnly: true,
+                        controller: vm.pickUpLocationDesCtrl,
+                        error: vm.pickUpLocationError,
+                        errorText: AppConstants.pickUpLocationError,
                         trailingIcon: true,
+                        onTap: (){
+                          vm.searchPlaces(context);
+                        },
                         trailIcon: Icons.location_on,
                       ),
                     ),
@@ -440,6 +469,8 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                       child: MyTextInputField(
                         label: "Full Name",
                         controller: content.fullnameController,
+                        errorText: AppConstants.fullNameError,
+                        error: content.fullNameError,
                       ),
                     ),
                     Container(
@@ -448,6 +479,8 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                         label: "Phone",
                         textEntryType: TextInputType.phone,
                         controller: content.phoneController,
+                        error: content.phoneError,
+                        errorText: AppConstants.phoneError,
                       ),
                     ),
                     Container(
@@ -463,6 +496,12 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                         label: "Delivery Location",
                         textEntryType: TextInputType.text,
                         trailingIcon: true,
+                        readOnly: true,
+                        errorText: AppConstants.deliveryLocationError,
+                        error: content.deliveryLocationError,
+                        onTap:(){
+                          vm.recipientDeliveryLocation(content, context);
+                        },
                         trailIcon: Icons.location_on,
                         controller: content.deliveryLocationTextController,
                       ),
@@ -486,6 +525,7 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
     }
 
     final thirdScreen = SingleChildScrollView(
+      scrollDirection: Axis.vertical,
       child:  Visibility(
         visible: vm.thirdPageVisible,
         child: Container(
@@ -502,7 +542,7 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                        height: device_height*0.6,
+                        height: vm.recipientSizedBoxHeight,
                         child: AnimatedList(
                           key: vm.listKey,
                           initialItemCount: vm.recipientList.length,
@@ -601,7 +641,7 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                                           style: BorderStyle.solid),
                                       borderRadius: BorderRadius.circular(5)),
                                   onPressed: (){
-
+                                     vm.checkRecipientData();
                                   },
                                 ),
                               )

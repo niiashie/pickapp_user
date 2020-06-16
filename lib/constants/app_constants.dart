@@ -37,4 +37,14 @@ class AppConstants {
     ];
   }
 
+  static const carrierTypeError = "Carrier type equired";
+  static const packageSizeError = "Package size required";
+  static const packageQuantityError = "Package quantity required";
+  static const itemDescriptionError = "Package description required";
+  static const fullNameError = "Full name required";
+  static const phoneError = "Phone number invalid";
+  static const pickUpLocationError = "Please specify your pick up location";
+  static const googlePlacesAPIKey = "AIzaSyD4uWQdcGhkShEFEFVFztGCdiHMm9Yw1SE";
+  static const deliveryLocationError = "Delivery location required";
+
 }

@@ -17,6 +17,7 @@ class _SplashScreenState extends State {
   final auth = locator<AuthService>();
   var router = locator<RouterService>();
 
+
   @override
   initState(){
     auth.isAuthenticated().then((authenticated) {

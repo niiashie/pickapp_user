@@ -101,4 +101,8 @@ class HttpService {
     return http.get("https://beac90b2-7c1a-445b-9835-3d222d804d8a.mock.pstmn.io/carrier-types");
   }
 
+  Future<http.Response>getPackageSizes(){
+    return http.get("https://beac90b2-7c1a-445b-9835-3d222d804d8a.mock.pstmn.io/package-sizes");
+  }
+
 }

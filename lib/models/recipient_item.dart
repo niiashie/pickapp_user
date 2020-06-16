@@ -8,9 +8,10 @@ class RecipientData {
   TextEditingController phoneController;
   TextEditingController deliveryLocationTextController;
   TextEditingController deliveryInstructionController;
+  String locationLatitude,locationLongitude;
   String title;
   bool cardExpanded;
-  bool iAmTheRecipient;
+  bool iAmTheRecipient,fullNameError,phoneError,deliveryLocationError;
 
   RecipientData({
     @required this.title,
@@ -19,6 +20,11 @@ class RecipientData {
     @required this.deliveryInstructionController,
     @required this.deliveryLocationTextController,
     @required this.cardExpanded,
-    @required this.iAmTheRecipient
+    @required this.iAmTheRecipient,
+    @required this.locationLatitude,
+    @required this.locationLongitude,
+    @required this.fullNameError,
+    @required this.phoneError,
+    @required this.deliveryLocationError
   });
 }

@@ -13,6 +13,7 @@ class MyTextInputField extends StatefulWidget{
    final IconData trailIcon;
    final int maxlines;
    final bool error;
+   final bool readOnly;
    final Function onTap;
    final String errorText;
    final isPasswordField;
@@ -32,7 +33,7 @@ class MyTextInputField extends StatefulWidget{
      this.maxlines = 1,
      this.isPasswordField = false,
      this.textEntryType,
-     this.validator, this.onTap
+     this.validator, this.onTap, this.readOnly=false
    }) : super(key: key);
 
    @override
@@ -78,6 +79,7 @@ class _myTextInputFieldState extends State<MyTextInputField> {
        cursorColor: Colors.purple,
        minLines: 1,
        onTap: widget.onTap ?? null,
+       readOnly: widget.readOnly,
        maxLines: widget.maxlines,
        style: TextStyle(
         color: Colors.black

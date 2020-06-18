@@ -2,10 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:pickappuser/config/locator.dart';
+import 'package:pickappuser/constants/local_storage_name.dart';
+
 
 
 class HttpService {
-  String host = "https://pickapp.disonstech.com/api/";
+  String host = "https://pickapp.disonstech.com/api";
+  //final localStorage = locator<StorageService>();
  // final localStorage = locator<LocalStorageService>();
 
   /*Future<http.Response> createPost2() async{
@@ -83,6 +87,23 @@ class HttpService {
     return http.post(uri,body: map);
   }
 
+  Future<http.Response>getServiceCharge(String distance,String carrierTypeId)async{
+    final uri = '$host/charges';
+    String token = "";
+    //await localStorage.getPref(LocalStorageName.bearerToken);
+    var map = new Map<String, String>();
+    map['distance_travelled'] = distance;
+    map['carrier_type_id'] = carrierTypeId;
+
+    return http.post(uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+         },
+         body: map
+        );
+
+  }
+
   Future<http.Response>loginUser(String loginType,String userDetail,String password){
     final uri = 'https://pickapp.disonstech.com/api/login';
     var map = new Map<String, String>();
@@ -104,5 +125,6 @@ class HttpService {
   Future<http.Response>getPackageSizes(){
     return http.get("https://beac90b2-7c1a-445b-9835-3d222d804d8a.mock.pstmn.io/package-sizes");
   }
+
 
 }

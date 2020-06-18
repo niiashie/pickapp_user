@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pickappuser/config/locator.dart';
-import 'package:pickappuser/constants/local_storage_name.dart';
 import 'package:pickappuser/constants/routes.dart';
 import 'package:pickappuser/services/auth.service.dart';
+import 'package:pickappuser/services/data.service.dart';
 import 'package:pickappuser/services/router.service.dart';
-import 'package:pickappuser/services/storage.service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pickappuser/constants/local_storage_name.dart';
+
 
 
 class SplashScreen extends StatefulWidget {
@@ -14,23 +16,27 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State {
-  final auth = locator<AuthService>();
+  var auth = locator<AuthService>();
   var router = locator<RouterService>();
-
 
   @override
   initState(){
-    auth.isAuthenticated().then((authenticated) {
-      if (authenticated) {
-        print("authenticated");
-        router.navigateToAndReplace(AppRoutes.dashboardRoute);
-      } else {
-        print("not authenticated");
-        router.navigateToAndReplace(AppRoutes.startScreenRoute);
-      }
-    });
+    print("Hi Emmanuel");
+    checkForSharedPreferences();
 
     super.initState();
+  }
+
+  void checkForSharedPreferences()async{
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String bearerToken = _prefs.getString(LocalStorageName.bearerToken);
+    if(bearerToken == null){
+      router.navigateTo(AppRoutes.startScreenRoute);
+    }
+    else{
+      router.navigateTo(AppRoutes.dashboardRoute);
+    }
+
   }
 
   @override

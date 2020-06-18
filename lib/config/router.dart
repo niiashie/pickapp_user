@@ -8,6 +8,7 @@ import 'package:pickappuser/ui/dashboard/dashboard.screen.dart';
 import 'package:pickappuser/ui/emailVerification/emailVerification.screen.dart';
 import 'package:pickappuser/ui/login/login.screen.dart';
 import 'package:pickappuser/ui/orderSummary/orderSummary.screen.dart';
+import 'package:pickappuser/ui/payment/payment.screen.dart';
 import 'package:pickappuser/ui/placesSearch/searchPlacesScreen.dart';
 import 'package:pickappuser/ui/registration/registration.screen.dart';
 import 'package:pickappuser/ui/splash/splash.screen.dart';
@@ -35,6 +36,8 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return MaterialPageRoute(builder: (context) => CustomSearchScreen());
     case AppRoutes.orderSummaryScreenRoute:
       return MaterialPageRoute(builder: (context) => OrderSummaryScreen());
+    case AppRoutes.paymentScreenRoute:
+      return MaterialPageRoute(builder: (context)=> PaymentScreen());
     default:
       return MaterialPageRoute(builder: (context) => StartScreen());
   }

@@ -293,6 +293,7 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                       margin: EdgeInsets.only(left:10,right: 10,top: 10),
                       child: MyTextInputField(
                         label: "Instruction",
+                        controller: vm.pickUpInstructionCtrl,
                         maxlines: 5,
                       ),
                     ),
@@ -524,11 +525,10 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
       );
     }
 
-    final thirdScreen = SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child:  Visibility(
-        visible: vm.thirdPageVisible,
-        child: Container(
+    final thirdScreen = Visibility(
+      visible: vm.thirdPageVisible,
+      child: ListView.builder(itemBuilder:(context,index){
+        return   Container(
           width: device_width,
           margin: EdgeInsets.only(left:20,right:20),
           child: Column(
@@ -551,6 +551,7 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                             // share it with the _removeSingleItem() method.
                             return recipientListItem(vm.recipientList[index],index);
                           },
+                          physics: ClampingScrollPhysics(),
                         ),
                       )
 
@@ -641,7 +642,7 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
                                           style: BorderStyle.solid),
                                       borderRadius: BorderRadius.circular(5)),
                                   onPressed: (){
-                                     vm.checkRecipientData();
+                                    vm.checkRecipientData();
                                   },
                                 ),
                               )
@@ -655,9 +656,12 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
               SizedBox(height: 20,)
             ],
           ),
-        ),
+        );
+      },
+        itemCount: 1,
       ),
     );
+
 
 
 

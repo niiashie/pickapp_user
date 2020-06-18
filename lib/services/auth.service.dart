@@ -1,10 +1,14 @@
 
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/local_storage_name.dart';
-import 'package:pickappuser/services/storage.service.dart';
+
+import 'data.service.dart';
+
+
 
 class AuthService{
-  final localStorage = locator<StorageService>();
+
+  /*final localStorage = locator<DataService>();
   Future<bool> isAuthenticated() async {
     try {
       String bearerToken = await localStorage.getPref(
@@ -37,5 +41,5 @@ class AuthService{
     }
 
     return true;
-  }
+  } */
 }

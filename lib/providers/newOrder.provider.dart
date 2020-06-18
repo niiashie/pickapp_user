@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +17,13 @@ import 'package:pickappuser/models/recipient_item.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/http.service.dart';
 import 'package:pickappuser/services/router.service.dart';
-import 'package:pickappuser/services/storage.service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NewOrderProvider extends ChangeNotifier{
   final GlobalKey<AnimatedListState> listKey = GlobalKey();
   final requests = locator<HttpService>();
   final router = locator<RouterService>();
-  final localStorage = locator<StorageService>();
+  //final localStorage = locator<StorageService>();
 
   List<RecipientData>recipientList = [
     new RecipientData(title: "Recepient 1 Detail",
@@ -36,6 +37,7 @@ class NewOrderProvider extends ChangeNotifier{
   ];
 
   var recipientSizedBoxHeight = 450.00;
+  var orderSummaryRecipientsSizedBoxHeight =0.00;
 
    bool packageFragile = false;
    bool iAmTheSender = false;
@@ -77,17 +79,35 @@ class NewOrderProvider extends ChangeNotifier{
 
 
   //String values
-  String pickUpLocationLatitude,pickUpLocationLongitude;
+  String pickUpLocationLatitude,pickUpLocationLongitude,packageFragileAnswer="No";
+
+  //Order Summary values
+  bool carrierDetailsExpanded = true,carrierDetailsMinimized = false;
+  bool senderDetailsExpanded = true,senderDetailsMinimized = false;
+
+  void orderSummaryCarrierDetailsExpandableClicked(){
+    carrierDetailsExpanded =!carrierDetailsExpanded;
+    carrierDetailsMinimized = !carrierDetailsExpanded;
+    notifyListeners();
+  }
+
+  void orderSummarySenderDetailsExpandableClicked(){
+    senderDetailsExpanded =!senderDetailsExpanded;
+    senderDetailsMinimized = !senderDetailsExpanded;
+    notifyListeners();
+  }
 
    void recipientCardIconClick(int index){
       recipientList[index].cardExpanded = !recipientList[index].cardExpanded;
       changeRecipientSizedBoxHeight();
+      changeOrderSummaryRecipientsHeight();
       notifyListeners();
    }
 
    void iAmRecipientClicked (bool newValue,int index) async{
-     String userName = await localStorage.getPref(LocalStorageName.userName);
-     String userPhone = await localStorage.getPref(LocalStorageName.userPhone);
+     SharedPreferences preferences = await SharedPreferences.getInstance();
+     String userName =preferences.getString(LocalStorageName.userName);
+     String userPhone =preferences.getString(LocalStorageName.userPhone);
      recipientList[index].iAmTheRecipient = newValue;
      if(newValue == true){
        //Clear other I am the recipient checked
@@ -180,8 +200,14 @@ class NewOrderProvider extends ChangeNotifier{
 
   void packageFragileOnClick(){
     packageFragile = !packageFragile;
+    if(packageFragile == true){
+      packageFragileAnswer = "Yes";
+    }else{
+      packageFragileAnswer = "No";
+    }
     notifyListeners();
   }
+
   void navigateToSecondPage(){
     checkCarrierType();
     checkPackageSize();
@@ -226,8 +252,9 @@ class NewOrderProvider extends ChangeNotifier{
   }
 
   void iAmTheSenderOnClick() async{
-     String userName = await localStorage.getPref(LocalStorageName.userName);
-     String userPhone = await localStorage.getPref(LocalStorageName.userPhone);
+     SharedPreferences preferences = await SharedPreferences.getInstance();
+     String userName = preferences.getString(LocalStorageName.userName);
+     String userPhone =preferences.getString(LocalStorageName.userPhone);
 
      //Check if iAmRecipeient is selected
      for(int i=0;i<recipientList.length;i++){
@@ -263,6 +290,7 @@ class NewOrderProvider extends ChangeNotifier{
 
      listKey.currentState.insertItem(recipientsSize);
      changeRecipientSizedBoxHeight();
+     changeOrderSummaryRecipientsHeight();
      notifyListeners();
   }
 
@@ -270,6 +298,7 @@ class NewOrderProvider extends ChangeNotifier{
     recipientList.removeAt(index);
     listKey.currentState.removeItem(index, (context, animation) => null);
     changeRecipientSizedBoxHeight();
+    changeOrderSummaryRecipientsHeight();
     notifyListeners();
   }
 
@@ -369,7 +398,6 @@ class NewOrderProvider extends ChangeNotifier{
        },
      );
   }
-
 
   void getPackageSizes(BuildContext context) async{
     Utils.getProgressBar(context, "Loading,please wait..", "showProgress");
@@ -494,7 +522,6 @@ class NewOrderProvider extends ChangeNotifier{
     );
   }
 
-
   Future<void> searchPlaces(BuildContext context) async {
     // show input autocomplete with selected mode
     // then get the Prediction selected
@@ -509,6 +536,7 @@ class NewOrderProvider extends ChangeNotifier{
 
     displayPrediction(p);
   }
+
   void onError(PlacesAutocompleteResponse response) {
     /*omeScaffoldKey.currentState.showSnackBar(
       SnackBar(content: Text(response.errorMessage)),
@@ -543,6 +571,7 @@ class NewOrderProvider extends ChangeNotifier{
     );
     populateRecipientDelivery(p,recipient);
   }
+
   Future<Null> populateRecipientDelivery(Prediction p,RecipientData recipient) async {
     GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: AppConstants.googlePlacesAPIKey);
     if (p != null) {
@@ -588,12 +617,21 @@ class NewOrderProvider extends ChangeNotifier{
          recipientList[i].deliveryLocationError = false;
        }
 
-       if(errorCounter == 0){
-         router.navigateTo(AppRoutes.orderSummaryScreenRoute);
-       }
-       notifyListeners();
 
      }
+     if(errorCounter == 0){
+       collapseRecipientCards();
+       router.navigateTo(AppRoutes.orderSummaryScreenRoute);
+     }
+     notifyListeners();
+  }
+
+  void collapseRecipientCards(){
+    for(int y=0;y<recipientList.length;y++){
+      recipientList[y].cardExpanded = false;
+    }
+    changeRecipientSizedBoxHeight();
+    changeOrderSummaryRecipientsHeight();
   }
 
   void changeRecipientSizedBoxHeight(){
@@ -610,5 +648,56 @@ class NewOrderProvider extends ChangeNotifier{
      recipientSizedBoxHeight = totalHeight;
      notifyListeners();
   }
+
+  void changeOrderSummaryRecipientsHeight(){
+    double closedHeight = 100;
+    double expandedHeight = 300;
+    double totalHeight = 0;
+    for(int y=0;y<recipientList.length;y++){
+      if(recipientList[y].cardExpanded == true){
+        totalHeight = totalHeight + expandedHeight;
+      }else{
+        totalHeight = totalHeight + closedHeight;
+      }
+    }
+    orderSummaryRecipientsSizedBoxHeight = totalHeight;
+    notifyListeners();
+  }
+
+  double calculateDistance(lat1, lon1, lat2, lon2){
+    var p = 0.017453292519943295;
+    var c = cos;
+    var a = 0.5 - c((lat2 - lat1) * p)/2 +
+        c(lat1 * p) * c(lat2 * p) *
+            (1 - c((lon2 - lon1) * p))/2;
+    return 12742 * asin(sqrt(a));
+  }
+
+
+  double totalDistanceTravelled(){
+    double totalDist = 0;
+    double pickUpLatitude =double.parse(pickUpLocationLatitude);
+    double pickUpLongitude = double.parse(pickUpLocationLongitude);
+
+    //Add distance from pickUp Location to first Recipient
+    totalDist = totalDist + calculateDistance(pickUpLatitude,pickUpLongitude,double.parse(recipientList[0].locationLatitude), double.parse(recipientList[0].locationLongitude));
+
+    if(recipientList.length>1){
+      for(int y=0;y<recipientList.length;y++){
+        int checkId = y+1;
+        if(y!=recipientList.length){
+          int nextDestination = y+1;
+          totalDist = totalDist + calculateDistance(double.parse(recipientList[y].locationLatitude),
+              double.parse(recipientList[y].locationLongitude),
+              double.parse(recipientList[nextDestination].locationLatitude),
+              double.parse(recipientList[nextDestination].locationLongitude)
+          );
+        }
+      }
+    }
+
+    return totalDist;
+  }
+
 
 }

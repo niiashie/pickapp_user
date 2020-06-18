@@ -7,8 +7,8 @@ import 'package:pickappuser/constants/routes.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/http.service.dart';
 import 'package:pickappuser/services/router.service.dart';
-import 'package:pickappuser/services/storage.service.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginProvider with ChangeNotifier{
   final requests = locator<HttpService>();
@@ -125,19 +125,15 @@ class LoginProvider with ChangeNotifier{
 
 
   void saveUserData(String token,String id,String name,String phone,String mail,String avatar,String tokenExpiry) async {
-    final localStorageService = locator<StorageService>();
-    await localStorageService.setPref(
-      LocalStorageName.bearerToken, token);
-    await localStorageService.setPref(
-      LocalStorageName.tokenExpiration, tokenExpiry);
-    await localStorageService.setPref(
-      LocalStorageName.userId, id,);
-    await localStorageService.setPref(
-      LocalStorageName.userName, name);
-    await localStorageService.setPref(
-      LocalStorageName.userAvatar,avatar);
-    await localStorageService.setPref(LocalStorageName.userPhone, phone);
-    await localStorageService.setPref(LocalStorageName.userMail, mail);
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString(LocalStorageName.bearerToken, token);
+    preferences.setString( LocalStorageName.tokenExpiration, tokenExpiry);
+    preferences.setString( LocalStorageName.userId,id);
+    preferences.setString(LocalStorageName.userName, name);
+    preferences.setString( LocalStorageName.userAvatar,avatar);
+    preferences.setString(LocalStorageName.userPhone, phone);
+    preferences.setString(LocalStorageName.userMail, mail);
+
   }
 
 }

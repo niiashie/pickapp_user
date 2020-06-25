@@ -6,11 +6,15 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:pickappuser/models/api_response.dart';
+import 'package:pickappuser/services/dialog.service.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 
 class Utils {
+
   ProgressDialog progressDialog;
+
+
   static Widget verticalSpacer({double space = 20.0}) {
     return SizedBox(height: space);
   }
@@ -26,6 +30,16 @@ class Utils {
 
   static String formatMoney(int amount) {
     return NumberFormat.currency(symbol: '\$').format(amount);
+  }
+
+  static void ShowError(String errorMessage,BuildContext context){
+    DialogService().showAlertDialog(context: context, message:"You will loose all your entries",
+        type: AlertDialogType.error,okayText: "Okay",
+        onOkayBtnTap: (){
+          Navigator.pop(context);
+        },
+
+    );
   }
 
    static void getProgressBar(BuildContext context,String message,String operation){

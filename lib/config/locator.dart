@@ -3,6 +3,7 @@ import 'package:pickappuser/services/auth.service.dart';
 import 'package:pickappuser/services/data.service.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/http.service.dart';
+import 'package:pickappuser/services/local.notification.service.dart';
 import 'package:pickappuser/services/router.service.dart';
 
 
@@ -13,5 +14,6 @@ void setupLocator(){
   locator.registerSingleton<DialogService>(DialogService());
   locator.registerSingleton<HttpService>(HttpService());
   locator.registerSingleton<AuthService>(AuthService());
+  locator.registerSingleton<LocalNotificationService>(LocalNotificationService());
   //locator.registerSingleton<DataService>(DataService());
 }

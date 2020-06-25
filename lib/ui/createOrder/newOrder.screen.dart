@@ -667,19 +667,21 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
 
 
     // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "New Order",
-          style: TextStyle(
-              color: Colors.white
-          ),),
-        iconTheme: IconThemeData(
-          color: Colors.white, //change your color here
+    return WillPopScope(
+      onWillPop:(){vm.reset(context);},
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "New Order",
+            style: TextStyle(
+                color: Colors.white
+            ),),
+          iconTheme: IconThemeData(
+            color: Colors.white, //change your color here
+          ),
+          backgroundColor: Colors.purple[900],
         ),
-        backgroundColor: Colors.purple[900],
-      ),
-      body: Container(
+        body: Container(
           height: device_height,
           width: device_width,
           color: Colors.white,
@@ -693,7 +695,10 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
         ),
 
 
+      ),
     );
+
+
   }
   
 }

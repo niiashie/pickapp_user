@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/local_storage_name.dart';
 import 'package:pickappuser/constants/routes.dart';
+import 'package:pickappuser/constants/utils.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/http.service.dart';
 import 'package:pickappuser/services/router.service.dart';
@@ -72,8 +73,7 @@ class LoginProvider with ChangeNotifier{
     var response;
     if( emailPhoneError == false && passwordError == false){
       print(loginType);
-      isLoading = true;
-      notifyListeners();
+      Utils.getProgressBar(context,"Loading,please wait.","showProgress");
       response = await requests.loginUser(loginType, emailPhoneCtrl.text, passwordCtrl.text);
       print(response);
       int code = response.statusCode;
@@ -103,6 +103,7 @@ class LoginProvider with ChangeNotifier{
           String tokenExpiry = body['expires_at'];
 
           saveUserData(token, id, name, phone, email, photo, tokenExpiry);
+          Utils.getProgressBar(context,"Loading,please wait.","");
           router.navigateTo(AppRoutes.dashboardRoute);
         }
         else{
@@ -119,7 +120,7 @@ class LoginProvider with ChangeNotifier{
       }
     }
 
-    isLoading = false;
+    Utils.getProgressBar(context,"Loading,please wait.","");
     notifyListeners();
   }
 

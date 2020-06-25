@@ -1,9 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:http/http.dart' as http;
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/local_storage_name.dart';
+import 'package:pickappuser/models/order_item.dart';
+import 'package:pickappuser/models/recipient_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -89,7 +93,9 @@ class HttpService {
 
   Future<http.Response>getServiceCharge(String distance,String carrierTypeId)async{
     final uri = '$host/charges';
-    String token = "";
+    SharedPreferences preferences =await SharedPreferences.getInstance();
+
+    String token = preferences.getString(LocalStorageName.bearerToken);
     //await localStorage.getPref(LocalStorageName.bearerToken);
     var map = new Map<String, String>();
     map['distance_travelled'] = distance;
@@ -102,6 +108,73 @@ class HttpService {
          body: map
         );
 
+  }
+
+  Future<http.Response>getOrders()async{
+    SharedPreferences preferences =await SharedPreferences.getInstance();
+    String token = preferences.getString(LocalStorageName.bearerToken);
+
+    String uri = "$host/orders";
+    return http.get(uri,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept':'application/json',
+        },
+
+    );
+  }
+
+  Future<http.Response>saveOrder(String CarrierId,
+      String packageId,String quantity,String isSender,String description,String isFragile,
+      String cost,String senderName,String senderPhone,String locAddress,String pLat,String pLong,
+      List<RecipientData>recipients
+      )async{
+    SharedPreferences preferences =await SharedPreferences.getInstance();
+    String token = preferences.getString(LocalStorageName.bearerToken);
+    DateTime now = new DateTime.now();
+    DateTime date = new DateTime(now.year, now.month, now.day);
+
+    var map = new Map<String, String>();
+    map['carrier_type_id'] = CarrierId;
+    map['package_size_id'] = packageId;
+    map['quantity'] = quantity;
+    map['is_sender'] = isSender;
+    map['description'] = description;
+    map['is_fragile'] = isFragile;
+    map['cost'] = cost;
+    map['sender_name'] = senderName;
+    map['sender_phone'] = senderPhone;
+    map['pickup_location_address'] = locAddress;
+    map['pickup_location_latitude'] = pLat;
+    map['pickup_location_longitude'] = pLong;
+   // map['pickup_at'] = date.toString();
+    map['is_within_city'] = "1";
+
+   for(int y=0;y<recipients.length;y++){
+      var rng = new Random();
+      String random = rng.nextInt(100).toString();
+      map["recipients[$y][name]"] = recipients[y].fullnameController.text;
+      map["recipients[$y][phone]"] = recipients[y].phoneController.text;
+      map["recipients[$y][latitude]"] = recipients[y].locationLatitude;
+      map["recipients[$y][longitude]"] = recipients[y].locationLongitude;
+      map["recipients[$y][confirmation_code]"] = random;
+      map["recipients[$y][delivery_instruction]"] = recipients[y].deliveryInstructionController.text.isNotEmpty? recipients[y].deliveryInstructionController.text : "" ;
+      map["recipients[$y][address]"] = recipients[y].deliveryLocationTextController.text;
+    }
+    String uri = "$host/orders";
+    return http.post(uri,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept':'application/json',
+        'Content-Type':'application/x-www-form-urlencoded',
+      },
+      body: map
+    );
+  }
+
+
+  Future<http.Response>getDistanceAndTime(String url){
+    return http.get(url);
   }
 
   Future<http.Response>loginUser(String loginType,String userDetail,String password){

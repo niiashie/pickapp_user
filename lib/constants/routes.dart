@@ -10,5 +10,10 @@ class AppRoutes {
   static const String placesSearchScreenRoute = "placesSearchScreenRoute";
   static const String orderSummaryScreenRoute = "orderSummaryScreen";
   static const String paymentScreenRoute = "paymentScreen";
+  static const String notificationRoute = "notificationRoute";
+  static const String localNotificationRoute = "localNotificationRoute";
+  static const String orderDetailsRoute = "orderDetailRoute";
+  static const String orderDetails2Route = "orderDetail2Route";
+
 
 }

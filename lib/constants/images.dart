@@ -10,4 +10,22 @@ class AppImages {
   static const airtel = "assets/images/airtel.png";
   static const masterCard = "assets/images/mastercard.png";
   static const visa = "assets/images/visa.png";
+  static const bannerURL = "https://firebasestorage.googleapis.com/v0/b/love-community-2cba7.appspot.com/o/banner_large.png?alt=media&token=5f42df7a-ec8f-4121-a47f-37f798ede5bc";
+  static const arrowRight = "assets/images/arrow_right.png";
+  static const orderDescription = "assets/images/purchase_icon.png";
+  static const quantity = "assets/images/quantity.png";
+  static const money = "assets/images/money.png";
+  static const user = "assets/images/user.png";
+  static const location = "assets/images/location.png";
+  static const code = "assets/images/key.png";
+  static const calendar = "assets/images/calendar.png";
+  static const clock = "assets/images/clock.png";
+  static const cargoTruck = "http://cargotruckinsurance.com/wp-content/uploads/2016/03/cropped-cargo-truck-300x300.jpg";
+  static const miniTruck = "https://www.trucksbuses.com/uploads/tata-ace-xl-cng-chota-hathi-mini-truck.jpg";
+  static const motorCycle = "https://previews.123rf.com/images/nerthuz/nerthuz1508/nerthuz150800068/44219507-motorcycle-delivery-box.jpg";
+  static const postman = "https://storage.googleapis.com/website-dev-images/sites/default/files/postman.jpg";
+  static const envelope = "https:\/\/parcel.dhl.co.uk\/repository\/Packages\/thumb\/135x156_Envelope1.jpg.jpg";
+  static const box2 = "https:\/\/parcel.dhl.co.uk\/repository\/Packages\/thumb\/135x156_Box2.jpg.jpg";
+  static const box3 = "https:\/\/parcel.dhl.co.uk\/repository\/Packages\/thumb\/135x156_Box3.jpg.jpg";
+  static const box4 = "https:\/\/parcel.dhl.co.uk\/repository\/Packages\/thumb\/135x156_Box4.jpg.jpg";
 }

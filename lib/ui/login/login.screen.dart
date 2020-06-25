@@ -37,27 +37,7 @@ class _LoginScreenstate extends State<LoginScreen>{
         width: device_width,
         height: device_height,
         color: Colors.white,
-        child:vm.isLoading? Container(
-          width: device_width,
-          height: device_height,
-          color: Colors.white.withOpacity(0.5),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                CircularProgressIndicator(),
-                SizedBox(height: 10),
-                Text(
-                  "Loading please wait....",
-                  style: TextStyle(
-                      color:Colors.black
-                  ),
-                )
-              ],
-            ),
-          ),
-        ): SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

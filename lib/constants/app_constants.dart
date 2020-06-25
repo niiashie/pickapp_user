@@ -46,5 +46,9 @@ class AppConstants {
   static const pickUpLocationError = "Please specify your pick up location";
   static const googlePlacesAPIKey = "AIzaSyD4uWQdcGhkShEFEFVFztGCdiHMm9Yw1SE";
   static const deliveryLocationError = "Delivery location required";
+  static const envelopeDimension = "27 x 35 x 2cm";
+  static const box2Dimension = "34 x 18 x 10cm";
+  static const box3Dimension = "34 x 32 x 10cm";
+  static const box4Dimension = "34 x 32 x 18cm";
 
 }

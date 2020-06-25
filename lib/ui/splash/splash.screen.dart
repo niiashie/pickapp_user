@@ -34,6 +34,7 @@ class _SplashScreenState extends State {
       router.navigateTo(AppRoutes.startScreenRoute);
     }
     else{
+      print(bearerToken);
       router.navigateTo(AppRoutes.dashboardRoute);
     }
 

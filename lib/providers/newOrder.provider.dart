@@ -2,28 +2,39 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pickappuser/config/locator.dart';
+import 'package:pickappuser/constants/animations.dart';
 import 'package:pickappuser/constants/app_constants.dart';
 import 'package:pickappuser/constants/local_storage_name.dart';
 import 'package:pickappuser/constants/routes.dart';
 import 'package:pickappuser/constants/utils.dart';
 import 'package:pickappuser/models/carrier_item.dart';
+import 'package:pickappuser/models/order_item.dart';
+import 'package:pickappuser/models/order_recipient.dart';
 import 'package:pickappuser/models/package_item.dart';
 import 'package:pickappuser/models/recipient_item.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/http.service.dart';
+import 'package:pickappuser/services/local.notification.service.dart';
 import 'package:pickappuser/services/router.service.dart';
+import 'package:pickappuser/ui/shared/myTextInput.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NewOrderProvider extends ChangeNotifier{
   final GlobalKey<AnimatedListState> listKey = GlobalKey();
   final requests = locator<HttpService>();
   final router = locator<RouterService>();
+
+  List<Recipient>certifiedRecipient = [];
   //final localStorage = locator<StorageService>();
+
 
   List<RecipientData>recipientList = [
     new RecipientData(title: "Recepient 1 Detail",
@@ -38,6 +49,8 @@ class NewOrderProvider extends ChangeNotifier{
 
   var recipientSizedBoxHeight = 450.00;
   var orderSummaryRecipientsSizedBoxHeight =0.00;
+  String serviceCharge=null;
+  String orderCode="";
 
    bool packageFragile = false;
    bool iAmTheSender = false;
@@ -63,6 +76,7 @@ class NewOrderProvider extends ChangeNotifier{
    //Selected Values
   CarrierType selectedCarrierType;
   PackageSizes selectedPackageSize;
+  Order selectedOrder;
 
   //Lists
   List<CarrierType>carrierTypes = [];
@@ -84,6 +98,58 @@ class NewOrderProvider extends ChangeNotifier{
   //Order Summary values
   bool carrierDetailsExpanded = true,carrierDetailsMinimized = false;
   bool senderDetailsExpanded = true,senderDetailsMinimized = false;
+
+
+  void reset(BuildContext context){
+    
+     DialogService().showAlertDialog(context: context, message:"You will loose all your entries",
+         type: AlertDialogType.warning,okayText: "Yes",cancelText: "No",
+       onOkayBtnTap: (){
+         initializeVariables();
+         router.navigateTo(AppRoutes.dashboardRoute);
+       },
+       onCancelBtnTap: (){
+         Navigator.pop(context);
+       }
+     );
+
+  }
+
+  void initializeVariables(){
+    //Resetting order summary values
+    carrierDetailsExpanded = true;
+    carrierDetailsMinimized = false;
+    senderDetailsExpanded = true;
+    senderDetailsMinimized = false;
+
+    //Resetting coordintes values
+    pickUpLocationLatitude="";
+    pickUpLocationLongitude="";
+    packageFragileAnswer="No";
+
+    //Resetting List
+    carrierTypes = [];
+    packageSizes = [];
+    recipientList = [new RecipientData(title: "Recepient 1 Detail",
+        fullnameController: new TextEditingController(),
+        phoneController: new TextEditingController(),
+        deliveryInstructionController: new TextEditingController(),
+        deliveryLocationTextController: new TextEditingController(),
+        cardExpanded: true, iAmTheRecipient: false,
+        locationLatitude: "", locationLongitude:"", fullNameError: false,
+        phoneError: false, deliveryLocationError: false)
+    ];
+
+    //Resetting textControllers
+    carrierTypeCtrl.text = "";
+    packageSizeCtrl.text = "";
+    packageQuantityCtrl.text = "";
+    itemDescriptionCtrl.text = "";
+    senderFullNameCtrl.text = "";
+    senderPhoneCtrl.text = "";
+    pickUpLocationDesCtrl.text = "";
+    pickUpInstructionCtrl.text = "";
+  }
 
   void orderSummaryCarrierDetailsExpandableClicked(){
     carrierDetailsExpanded =!carrierDetailsExpanded;
@@ -302,8 +368,10 @@ class NewOrderProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+
+
   void getCarrierTypes(BuildContext context) async{
-      Utils.getProgressBar(context, "Loading,please wait..", "showProgress");
+      Utils.getProgressBar(context, "Loading,please wait", "showProgress");
       var response;
       response = await requests.getCarrierTypes();
       print(response);
@@ -369,6 +437,8 @@ class NewOrderProvider extends ChangeNotifier{
       notifyListeners();
 
   }
+
+
 
   Widget CarrierTypeItem(CarrierType content,index,BuildContext context){
      return InkWell(
@@ -664,39 +734,304 @@ class NewOrderProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  double calculateDistance(lat1, lon1, lat2, lon2){
-    var p = 0.017453292519943295;
-    var c = cos;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 +
-        c(lat1 * p) * c(lat2 * p) *
-            (1 - c((lon2 - lon1) * p))/2;
-    return 12742 * asin(sqrt(a));
+
+  void totalDistanceTravelled(BuildContext context) async {
+    if(serviceCharge==null){
+      double totalDistance = 0;
+      //Get distance between geo coordinates using google direction matrix api
+      String url = "https://maps.googleapis.com/maps/api/distancematrix/json"
+          "?units=imperial&origins=$pickUpLocationLatitude,$pickUpLocationLongitude&destinations=";
+
+      for(int y=0;y<recipientList.length;y++){
+        int finalIndex = recipientList.length - 1;
+        if(y == finalIndex){
+          url = url+recipientList[y].locationLatitude+"%2C"+recipientList[y].locationLongitude;
+        }
+        else{
+          url = url+recipientList[y].locationLatitude+"%2C"+recipientList[y].locationLongitude+"%7C";
+        }
+      }
+      url = url+"&key="+AppConstants.googlePlacesAPIKey;
+      print(url);
+
+      Utils.getProgressBar(context, "Loading,please wait..", "showProgress");
+
+      var response = await requests.getDistanceAndTime(url);
+      print(response);
+      int code = response.statusCode;
+      print(code);
+      if(code == 200){
+        Map<String, dynamic> body = jsonDecode(response.body);
+        List<dynamic>results = body['rows'];
+        List<dynamic>element = results[0]['elements'];
+        for(int i =0;i<element.length;i++){
+          Map<String,dynamic>object = element[i];
+          Map<String,dynamic>distanceObject = object['distance'];
+          int distanceValue = distanceObject['value'];
+          double distanceInKilometers = distanceValue/1000;
+          print(distanceInKilometers);
+          totalDistance = totalDistance + distanceInKilometers;
+        }
+
+      }
+      else{
+        print("Please check Internet");
+      }
+      String tDist = totalDistance.toString();
+
+      var serviceChargeResponse = await requests.getServiceCharge(tDist, selectedCarrierType.carrierId);
+      Map<String, dynamic> body2 = jsonDecode(serviceChargeResponse.body);
+      double charge = body2['charge'];
+      double rounded = charge.roundToDouble();
+      serviceCharge = rounded.toString();
+
+
+      Utils.getProgressBar(context, "Loading,please wait..", "");
+      router.navigateTo(AppRoutes.paymentScreenRoute);
+
+    }
+    else{
+      router.navigateTo(AppRoutes.paymentScreenRoute);
+    }
+
   }
 
 
-  double totalDistanceTravelled(){
-    double totalDist = 0;
-    double pickUpLatitude =double.parse(pickUpLocationLatitude);
-    double pickUpLongitude = double.parse(pickUpLocationLongitude);
+  void paymentDialog(BuildContext context,String network){
+     TextEditingController networkController = new TextEditingController(text:network);
+     String amountToPay = "GHS $serviceCharge";
+     DialogService().showCustomDialog(context: context,
+         customDialog: Container(
+           height: 450,
+           child: Column(
+             mainAxisSize: MainAxisSize.min,
+             crossAxisAlignment: CrossAxisAlignment.center,
+             children: <Widget>[
+               Container(
+                 margin: EdgeInsets.only(top: 15),
+                 height: 150,
+                 width: 250,
+                 child: Center(
+                  child:  Lottie.network(
+                      'https://assets9.lottiefiles.com/packages/lf20_7Ht9wn.json'),
+                 ),
+               ),
+               SizedBox(height: 10,),
+               Text(
+                 amountToPay,
+                 style: TextStyle(
+                   color: Colors.purple[900],
+                   fontWeight: FontWeight.w700,
+                   fontSize: 18
+                 ),
+               ),
+               Container(
+                 margin: EdgeInsets.only(left:10,right:10,top: 10,bottom: 5),
+                 child: MyTextInputField(
+                   label: "Network",
+                   readOnly: true,
+                   controller: networkController,
+                 ),
+               ),
+               Container(
+                 margin: EdgeInsets.only(left:10,right:10,top:5,bottom: 5),
+                 child: MyTextInputField(
+                   label: "Name",
+                   textEntryType: TextInputType.text,
+                 ),
+               ),
+               Container(
+                 margin: EdgeInsets.only(left:10,right:10,top: 5,bottom: 5),
+                 child: MyTextInputField(
+                   label: "Phone",
+                   textEntryType: TextInputType.phone,
+                 ),
+               ),
+               Container(
+                 margin: EdgeInsets.only(left:10,right:10,top: 5,bottom: 5),
+                 child: Row(
+                   mainAxisSize: MainAxisSize.max,
+                   children: <Widget>[
+                     Expanded(
+                       child: ButtonTheme(
+                         height: 50,
+                         child: RaisedButton(
+                           color: Colors.amber[900],
+                           child: Text(
+                             "Pay",
+                             style: TextStyle(
+                                 color: Colors.white
+                             ),
+                           ),
+                           shape: RoundedRectangleBorder(
+                               side: BorderSide(
+                                   color: Colors.amber[900],
+                                   width: 1,
+                                   style: BorderStyle.solid),
+                               borderRadius: BorderRadius.circular(5)),
+                           onPressed: (){
+                             saveOrder(context);
+                           },
+                         ),
+                       ),
+                     )
+                   ],
+                 ),
+               )
 
-    //Add distance from pickUp Location to first Recipient
-    totalDist = totalDist + calculateDistance(pickUpLatitude,pickUpLongitude,double.parse(recipientList[0].locationLatitude), double.parse(recipientList[0].locationLongitude));
+             ],
+           ),
+         ));
+  }
 
-    if(recipientList.length>1){
-      for(int y=0;y<recipientList.length;y++){
-        int checkId = y+1;
-        if(y!=recipientList.length){
-          int nextDestination = y+1;
-          totalDist = totalDist + calculateDistance(double.parse(recipientList[y].locationLatitude),
-              double.parse(recipientList[y].locationLongitude),
-              double.parse(recipientList[nextDestination].locationLatitude),
-              double.parse(recipientList[nextDestination].locationLongitude)
-          );
-        }
-      }
+  void saveOrder(BuildContext context)async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String apiToken = pref.getString(LocalStorageName.bearerToken);
+    String firebaseToken = pref.getString(LocalStorageName.FCMToken);
+
+    String amSender ="",amSenderBool;
+    String packaFrag="",packageFragileBool;
+    if(iAmTheSender == true){
+      amSender = "1";
+      amSenderBool = "true";
+    }else{
+      amSender = "0";
+      amSenderBool = "false";
+    }
+    if(packageFragile == true){
+      packaFrag = "1";
+      packageFragileBool = "true";
+    }
+    else{
+      packaFrag = "0";
+      packageFragileBool = "false";
     }
 
-    return totalDist;
+    Utils.getProgressBar(context, "Loading,please wait..", "showProgress");
+
+    var response = await requests.saveOrder(selectedCarrierType.carrierId, selectedPackageSize.packageId,
+        packageQuantityCtrl.text.isNotEmpty ? packageQuantityCtrl.text:"", amSender,
+        itemDescriptionCtrl.text.isNotEmpty ? itemDescriptionCtrl.text:"", packaFrag,
+        serviceCharge,senderFullNameCtrl.text,senderPhoneCtrl.text, pickUpLocationDesCtrl.text,
+        pickUpLocationLatitude,pickUpLocationLongitude,
+      recipientList
+    );
+
+
+
+    if(response.statusCode == 200){
+      Map<String, dynamic> body = jsonDecode(response.body);
+
+      String orderId = body['order_id'].toString() ?? null;
+      orderCode = body['order_code'].toString() ?? null;
+
+      print(body);
+      pushOrderToFirebase(context,orderId,apiToken,firebaseToken,orderCode,packageFragileBool,"");
+
+    }else{
+      print("Error");
+    }
+
+
+
+
+  }
+
+  void pushOrderToFirebase(BuildContext context,String orderId,String senderToken,String FCMToken,
+      String orderCode,String orderFragile,String senderImgURL){
+    DateTime now = new DateTime.now();
+    DateTime date = new DateTime(now.year, now.month, now.day);
+
+    final databaseReference = FirebaseDatabase.instance.reference().child("Flutter").child(selectedCarrierType.carrierId)
+    .child("PendingOrders").child(orderId);
+    databaseReference.set({
+      'firebaseToken':FCMToken,
+      'locationAddress':pickUpLocationDesCtrl.text,
+      'orderCode':orderCode,
+      'orderDescription':itemDescriptionCtrl.text,
+      'orderFragile': orderFragile,
+      'orderID':orderId,
+      'orderQuantity': packageQuantityCtrl.text,
+      'packageID':selectedPackageSize.packageId,
+      'pickUpDate':date.toString(),
+      'pickUpInstruction': pickUpInstructionCtrl.text.isNotEmpty? pickUpInstructionCtrl.text:"",
+      'pickUpLatitude':pickUpLocationLatitude,
+      'pickUpLongitude':pickUpLocationLongitude,
+      'senderName':senderFullNameCtrl.text,
+      'senderPhone':senderPhoneCtrl.text,
+      'senderPhoto':senderImgURL,
+      'serviceCharge':serviceCharge
+    }).then((value) => {
+        pushRecipientsToFirebase(context,orderId),
+        getCertifiedRecipients()
+    });
+        /*.catchError((onError){
+      Utils.getProgressBar(context, "Loading,please wait..", "");
+      print("Something went wrong: ${onError.message}");
+    });
+    Utils.getProgressBar(context, "Loading,please wait..", ""); */
+
+  }
+
+  void pushRecipientsToFirebase(BuildContext context,String orderId){
+    final recipients = FirebaseDatabase.instance.reference().child("Flutter").child("Recipients").child(orderId);
+
+    for(int i=0;i<recipientList.length;i++){
+      int lastIndex = recipientList.length -1;
+      recipients.push().set({
+        'deliveryAddress': recipientList[i].deliveryLocationTextController.text,
+        'deliveryInstruction':recipientList[i].deliveryInstructionController.text.isNotEmpty ? recipientList[i].deliveryInstructionController.text:"",
+        'latitude':recipientList[i].locationLatitude,
+        'longitude':recipientList[i].locationLongitude,
+        'name':recipientList[i].fullnameController.text,
+        'phone':recipientList[i].phoneController.text
+      });
+      if(i==lastIndex){
+        LocalNotificationService().showNotificationMediaStyle("PickApp Order","Successfully placed order for pick up",AppRoutes.orderDetailsRoute);
+        router.navigateTo(AppRoutes.dashboardRoute);
+        Utils.getProgressBar(context, "Loading,please wait..", "");
+      }
+    }
+  }
+
+  void getCertifiedRecipients(){
+    certifiedRecipient.clear();
+    for(int i =0;i<recipientList.length;i++){
+      certifiedRecipient.add(
+        new Recipient(
+            name:recipientList[i].fullnameController.text,
+            phone: recipientList[i].phoneController.text,
+            deliveryLocation: recipientList[i].deliveryLocationTextController.text,
+            confirmationCode: "pending",
+            cardExpanded: false)
+      );
+    }
+  }
+
+  bool senderCardExpanded = false;
+
+  void senderCardArrowClicked(){
+    senderCardExpanded = !senderCardExpanded;
+    notifyListeners();
+  }
+  void recipientCardArrowClicked(index){
+    getRecipientsHeight();
+    certifiedRecipient[index].cardExpanded = !certifiedRecipient[index].cardExpanded;
+    notifyListeners();
+  }
+  double getRecipientsHeight(){
+    int closedHeight = 100;
+    int openHeight = 350;
+    int total = 0;
+    for(int i=0;i<certifiedRecipient.length;i++){
+      if(certifiedRecipient[i].cardExpanded == true){
+        total = total + openHeight;
+      }
+      else{
+        total = total + closedHeight;
+      }
+    }
+    return total.toDouble();
   }
 
 

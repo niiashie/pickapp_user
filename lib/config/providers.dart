@@ -1,3 +1,4 @@
+import 'package:pickappuser/providers/dashBoardProvider.dart';
 import 'package:pickappuser/providers/loginProvider.dart';
 import 'package:pickappuser/providers/newOrder.provider.dart';
 import 'package:pickappuser/providers/registrationProvider.dart';
@@ -12,4 +13,5 @@ List<SingleChildWidget>providers = [
   ChangeNotifierProvider<EmailVerificationProvider>.value(value: EmailVerificationProvider()),
   ChangeNotifierProvider<DrawerStateInfo>.value(value: DrawerStateInfo()),
   ChangeNotifierProvider<NewOrderProvider>.value(value: NewOrderProvider()),
+  ChangeNotifierProvider<DashBoardProvider>.value(value: DashBoardProvider())
 ];

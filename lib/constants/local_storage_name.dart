@@ -7,6 +7,7 @@ class LocalStorageName {
   static const userAvatar = "user_avatar";
   static const userMail = "user_mail";
   static const userPhone = "user_phone";
+  static const FCMToken = "fcmToken";
 
 
 }

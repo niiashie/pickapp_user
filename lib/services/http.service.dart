@@ -5,7 +5,6 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/local_storage_name.dart';
-import 'package:pickappuser/models/order_item.dart';
 import 'package:pickappuser/models/recipient_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -175,6 +174,29 @@ class HttpService {
 
   Future<http.Response>getDistanceAndTime(String url){
     return http.get(url);
+  }
+
+  Future<http.Response>updateProfile(String firstName,String lastName,String mail,String phone)async{
+    SharedPreferences preferences =await SharedPreferences.getInstance();
+
+    String token = preferences.getString(LocalStorageName.bearerToken);
+    String userId = preferences.getString(LocalStorageName.userId);
+
+    var map = new Map<String, String>();
+    map['first_name'] = firstName;
+    map['last_name'] = lastName;
+    map['email'] = mail;
+    map['phone'] = phone;
+
+    String url = "$host/users/$userId";
+    return http.put(url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept':'application/json',
+        'Content-Type':'application/x-www-form-urlencoded',
+      },
+      body: map
+    );
   }
 
   Future<http.Response>loginUser(String loginType,String userDetail,String password){

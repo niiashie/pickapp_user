@@ -7,18 +7,18 @@ import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/app_constants.dart';
 import 'package:pickappuser/constants/images.dart';
 import 'package:pickappuser/constants/routes.dart';
+import 'package:pickappuser/models/drawer_item.dart';
 import 'package:pickappuser/models/order_item2.dart';
 import 'package:pickappuser/models/order_recipient.dart';
-import 'package:pickappuser/providers/dashBoardProvider.dart';
+import 'package:pickappuser/providers/drawer.provider.dart';
 import 'package:pickappuser/providers/newOrder.provider.dart';
+import 'package:pickappuser/services/data.service.dart';
 import 'package:pickappuser/services/http.service.dart';
 import 'package:pickappuser/services/local.notification.service.dart';
 import 'package:pickappuser/services/router.service.dart';
 import 'package:pickappuser/ui/orderDetail2/orderDetail2.screen.dart';
 import 'package:pickappuser/ui/shared/myBaseScreen.dart';
-import 'package:pickappuser/constants/utils.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DashBoardScreen extends StatefulWidget{
 
@@ -29,21 +29,27 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
   var router = locator<RouterService>();
   final requests = locator<HttpService>();
   var localNotification = locator<LocalNotificationService>();
+
+
   bool loading = true;
   List<Order2>myOrders = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    var vm = context.read<DrawerStateInfo>();
     checkForOrders();
   }
 
   void checkForOrders()async{
+
+   // List<String>notifications = await DataService().getStringList("notificationDates");
+   // print("The size of notifications is:${notifications.length}");
+
     var response = await requests.getOrders();
     int statusCode = response.statusCode;
     if(statusCode == 200){
       List<dynamic> body = jsonDecode(response.body);
-      print(body.length);
       for(int y=0;y<body.length;y++){
         Map<String,dynamic>object = body[y];
         Map<String,dynamic>carrierObject = object['carrier_type'];
@@ -111,7 +117,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
         //Sender Object
         Map<String,dynamic>senderObject = object['issuer'];
         String senderName = senderObject['first_name']+" "+ senderObject['last_name'];
-        print(senderName);
         String senderPhone = senderObject['phone'];
 
         List<dynamic>recipients = object['recipient'];
@@ -190,6 +195,24 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
     }
     String date_day = date.substring(8,10);
     return date_day+" "+date_month+" "+date_year;
+  }
+
+  String restructureTime(String date){
+    String category = "";
+    String actualHour = "";
+    String hour = date.substring(11,13);
+    String minuites = date.substring(14,16);
+    int d = int.parse(hour);
+    if(d>12){
+      category = "PM";
+      d = d-12;
+      actualHour = d.toString();
+    }
+    else{
+      category = "AM";
+      actualHour = d.toString();
+    }
+    return "$actualHour:$minuites $category";
   }
 
   @override

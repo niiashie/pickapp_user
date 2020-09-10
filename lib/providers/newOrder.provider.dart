@@ -20,6 +20,7 @@ import 'package:pickappuser/models/order_item.dart';
 import 'package:pickappuser/models/order_recipient.dart';
 import 'package:pickappuser/models/package_item.dart';
 import 'package:pickappuser/models/recipient_item.dart';
+import 'package:pickappuser/services/data.service.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/http.service.dart';
 import 'package:pickappuser/services/local.notification.service.dart';
@@ -917,7 +918,10 @@ class NewOrderProvider extends ChangeNotifier{
       recipientList
     );
 
-
+    //Get Storage Preferences
+    SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String bearerToken = _prefs.getString(LocalStorageName.bearerToken);
+    String senderImg = _prefs.getString(LocalStorageName.userAvatar);
 
     if(response.statusCode == 200){
       Map<String, dynamic> body = jsonDecode(response.body);
@@ -926,7 +930,7 @@ class NewOrderProvider extends ChangeNotifier{
       orderCode = body['order_code'].toString() ?? null;
 
       print(body);
-      pushOrderToFirebase(context,orderId,apiToken,firebaseToken,orderCode,packageFragileBool,"");
+      pushOrderToFirebase(context,orderId,apiToken,firebaseToken,orderCode,packageFragileBool,senderImg);
 
     }else{
       print("Error");
@@ -938,33 +942,53 @@ class NewOrderProvider extends ChangeNotifier{
   }
 
   void pushOrderToFirebase(BuildContext context,String orderId,String senderToken,String FCMToken,
-      String orderCode,String orderFragile,String senderImgURL){
+      String orderCode,String orderFragile,String senderImgURL)async{
     DateTime now = new DateTime.now();
     DateTime date = new DateTime(now.year, now.month, now.day);
 
     final databaseReference = FirebaseDatabase.instance.reference().child("Flutter").child(selectedCarrierType.carrierId)
     .child("PendingOrders").child(orderId);
-    databaseReference.set({
-      'firebaseToken':FCMToken,
-      'locationAddress':pickUpLocationDesCtrl.text,
-      'orderCode':orderCode,
-      'orderDescription':itemDescriptionCtrl.text,
-      'orderFragile': orderFragile,
-      'orderID':orderId,
-      'orderQuantity': packageQuantityCtrl.text,
-      'packageID':selectedPackageSize.packageId,
-      'pickUpDate':date.toString(),
-      'pickUpInstruction': pickUpInstructionCtrl.text.isNotEmpty? pickUpInstructionCtrl.text:"",
-      'pickUpLatitude':pickUpLocationLatitude,
-      'pickUpLongitude':pickUpLocationLongitude,
-      'senderName':senderFullNameCtrl.text,
-      'senderPhone':senderPhoneCtrl.text,
-      'senderPhoto':senderImgURL,
-      'serviceCharge':serviceCharge
-    }).then((value) => {
+
+    final TransactionResult transactionResult =
+        await databaseReference.runTransaction((MutableData mutableData) async {
+      mutableData.value = (mutableData.value ?? 0) + 1;
+
+      return mutableData;
+    });
+
+    if(transactionResult.committed){
+      databaseReference.set({
+        'firebaseToken':FCMToken,
+        'locationAddress':pickUpLocationDesCtrl.text,
+        'orderCode':orderCode,
+        'orderDescription':itemDescriptionCtrl.text,
+        'orderFragile': orderFragile,
+        'orderID':orderId,
+        'orderQuantity': packageQuantityCtrl.text,
+        'packageID':selectedPackageSize.packageId,
+        'pickUpDate':date.toString(),
+        'pickUpInstruction': pickUpInstructionCtrl.text.isNotEmpty? pickUpInstructionCtrl.text:"",
+        'pickUpLatitude':pickUpLocationLatitude,
+        'pickUpLongitude':pickUpLocationLongitude,
+        'senderAPIToken':senderToken,
+        'senderName':senderFullNameCtrl.text,
+        'senderPhone':senderPhoneCtrl.text,
+        'senderPhoto':senderImgURL,
+        'serviceCharge':serviceCharge
+      }).then((value) => {
         pushRecipientsToFirebase(context,orderId),
         getCertifiedRecipients()
-    });
+      });
+    }
+    else{
+      Utils.getProgressBar(context, "Loading,please wait..", "");
+      DialogService().showAlertDialog(context: context, message:"Please check Internet", type:AlertDialogType.error,
+       showCancelBtn: false, okayText: "Okay",onOkayBtnTap: (){
+            Navigator.pop(context);
+          }
+      );
+    }
+
         /*.catchError((onError){
       Utils.getProgressBar(context, "Loading,please wait..", "");
       print("Something went wrong: ${onError.message}");
@@ -973,24 +997,85 @@ class NewOrderProvider extends ChangeNotifier{
 
   }
 
-  void pushRecipientsToFirebase(BuildContext context,String orderId){
+  void pushRecipientsToFirebase(BuildContext context,String orderId)async{
     final recipients = FirebaseDatabase.instance.reference().child("Flutter").child("Recipients").child(orderId);
 
+    final TransactionResult transactionResult = await recipients.runTransaction((MutableData mutableData) async {
+      mutableData.value = (mutableData.value ?? 0) + 1;
+
+      return mutableData;
+    });
     for(int i=0;i<recipientList.length;i++){
       int lastIndex = recipientList.length -1;
-      recipients.push().set({
-        'deliveryAddress': recipientList[i].deliveryLocationTextController.text,
-        'deliveryInstruction':recipientList[i].deliveryInstructionController.text.isNotEmpty ? recipientList[i].deliveryInstructionController.text:"",
-        'latitude':recipientList[i].locationLatitude,
-        'longitude':recipientList[i].locationLongitude,
-        'name':recipientList[i].fullnameController.text,
-        'phone':recipientList[i].phoneController.text
-      });
-      if(i==lastIndex){
-        LocalNotificationService().showNotificationMediaStyle("PickApp Order","Successfully placed order for pick up",AppRoutes.orderDetailsRoute);
-        router.navigateTo(AppRoutes.dashboardRoute);
-        Utils.getProgressBar(context, "Loading,please wait..", "");
+      if(transactionResult.committed){
+        recipients.push().set({
+          'deliveryAddress': recipientList[i].deliveryLocationTextController.text,
+          'deliveryInstruction':recipientList[i].deliveryInstructionController.text.isNotEmpty ? recipientList[i].deliveryInstructionController.text:"",
+          'latitude':recipientList[i].locationLatitude,
+          'longitude':recipientList[i].locationLongitude,
+          'name':recipientList[i].fullnameController.text,
+          'phone':recipientList[i].phoneController.text
+        });
+        if(i==lastIndex){
+          //Get Notification date
+          List<String>notificationDates = await DataService().getStringList("notificationDates");
+          var date = new DateTime.now().toString();
+          var dateParse = DateTime.parse(date);
+          String month = getMonth(dateParse.month);
+          String formattedDate = "${dateParse.day} $month ${dateParse.year}";
+          notificationDates.add(formattedDate);
+          DataService().setStringList("notificationDates",notificationDates);
+
+          //Get Notification body
+          List<String>notificationBody = await DataService().getStringList("notificationBody");
+          notificationBody.add("Successfully placed order for pick up");
+          DataService().setStringList("notificationBody",notificationBody);
+
+          LocalNotificationService().showNotificationMediaStyle("PickApp Order","Successfully placed order for pick up",AppRoutes.orderDetailsRoute);
+          print("Present");
+          router.navigateTo(AppRoutes.dashboardRoute);
+         // Utils.getProgressBar(context, "Loading,please wait..", "");
+        }
       }
+    }
+  }
+
+  String getMonth(int month){
+    if(month == 1){
+      return "January";
+    }
+    else if(month == 2){
+      return "Febuary";
+    }
+    else if(month == 3){
+      return "March";
+    }
+    else if(month == 4){
+      return "April";
+    }
+    else if(month == 5){
+      return "May";
+    }
+    else if(month == 6){
+      return "June";
+    }
+    else if(month == 7){
+      return "July";
+    }
+    else if(month == 8){
+      return "August";
+    }
+    else if(month == 9){
+      return "September";
+    }
+    else if(month == 10){
+      return "October";
+    }
+    else if(month == 11){
+      return "November";
+    }
+    else {
+      return "December";
     }
   }
 

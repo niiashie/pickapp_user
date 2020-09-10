@@ -1,9 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/app_constants.dart';
 import 'package:pickappuser/constants/images.dart';
+import 'package:pickappuser/constants/local_storage_name.dart';
 import 'package:pickappuser/models/drawer_item.dart';
 import 'package:pickappuser/providers/drawer.provider.dart';
+import 'package:pickappuser/services/data.service.dart';
 
 import 'package:pickappuser/services/router.service.dart';
 import 'package:provider/provider.dart';
@@ -31,44 +34,6 @@ class NavDrawer extends StatelessWidget {
 
 
 
-    final name = Container(
-      margin: EdgeInsets.only(top: 5.0),
-      child: Text("John Snow"),
-    );
-
-    final header = DrawerHeader(
-      margin: EdgeInsets.all(0.00),
-      child: Container(
-        color: Colors.purple[900],
-        padding: EdgeInsets.only(top:20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                image: DecorationImage(
-                  image: AssetImage(AppImages.userAvatar),
-                fit: BoxFit.cover,
-                ),
-                border: Border.all(
-                  color: Colors.white,
-                  width: 2
-                )
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Emmanuel Ashie"
-            )
-          ],
-        ),
-      ),
-    );
 
     final header2 = Container(
       width: device_width,
@@ -82,26 +47,56 @@ class NavDrawer extends StatelessWidget {
           Container(
             width: 100,
             height: 100,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                image: DecorationImage(
-                  image: AssetImage(AppImages.userAvatar),
-                  fit: BoxFit.cover,
-                ),
-                border: Border.all(
-                    color: Colors.white,
-                    width: 2
-                )
+            child: FutureBuilder(
+              future: DataService().getPref(LocalStorageName.userAvatar),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                ImageProvider imageProvider = AssetImage(AppImages.userAvatar);
+                if (snapshot.hasData) {
+                  if (snapshot.data != null) {
+                    imageProvider = CachedNetworkImageProvider(snapshot.data);
+                  }
+                }
+
+
+                return Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
           SizedBox(height: 10),
-          Text(
+          FutureBuilder(
+            future: DataService().getPref(LocalStorageName.userName),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              String name = "";
+              if (snapshot.hasData) {
+                if (snapshot.data != null) {
+                  name = snapshot.data;
+                }
+              }
+              return Text(
+                  name,
+                style: TextStyle(
+                  color: Colors.white
+                ),
+              );
+            },
+          )
+          /*Text(
               "Emmanuel Ashie",
             style: TextStyle(
               color:Colors.white
             ),
-          )
+          ) */
         ],
       ),
     );
@@ -131,14 +126,14 @@ class NavDrawer extends StatelessWidget {
 
     bool isActive = currentDrawerIndex == index;
 
-    Color color = isActive ? Colors.purple[900] : Colors.black;
+    Color color = isActive ? Colors.white : Colors.black;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5),
       child: MaterialButton(
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-        color: isActive ? Colors.purple[900].withOpacity(0.3) : null,
+        color: isActive ? Colors.purple[900] : null,
         onPressed: () {
           if (drawerItem.route != null) {
             // Clear Selected Board from LocalStorage

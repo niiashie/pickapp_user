@@ -20,6 +20,9 @@ class AppImages {
   static const code = "assets/images/key.png";
   static const calendar = "assets/images/calendar.png";
   static const clock = "assets/images/clock.png";
+  static const shutDown = "assets/images/shut_down.png";
+  static const bell = "assets/images/bell.png";
+  static const question = "assets/images/question.png";
   static const cargoTruck = "http://cargotruckinsurance.com/wp-content/uploads/2016/03/cropped-cargo-truck-300x300.jpg";
   static const miniTruck = "https://www.trucksbuses.com/uploads/tata-ace-xl-cng-chota-hathi-mini-truck.jpg";
   static const motorCycle = "https://previews.123rf.com/images/nerthuz/nerthuz1508/nerthuz150800068/44219507-motorcycle-delivery-box.jpg";

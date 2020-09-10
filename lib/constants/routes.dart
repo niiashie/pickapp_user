@@ -14,6 +14,9 @@ class AppRoutes {
   static const String localNotificationRoute = "localNotificationRoute";
   static const String orderDetailsRoute = "orderDetailRoute";
   static const String orderDetails2Route = "orderDetail2Route";
+  static const String settingsRoute = "settingsRoute";
+  static const String editProfileRoute = "editProfileRoute";
+  static const String changePasswordRoute = "changePasswordRoute";
 
 
 }

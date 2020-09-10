@@ -1,0 +1,116 @@
+{
+  "project_info": {
+    "project_number": "1070933695487",
+    "firebase_url": "https://pickapp-74769.firebaseio.com",
+    "project_id": "pickapp-74769",
+    "storage_bucket": "pickapp-74769.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070933695487:android:5122ae0abe4a061a9965ca",
+        "android_client_info": {
+          "package_name": "com.breakinvent.flutter.affordable.ashie.pickappuser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1070933695487-keev56pe7fkdfodruo0lfljigovtc37l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkPYZoGOaWtoj5TqnXtmJswoR25-xCNlU"
+        },
+        {
+          "current_key": "AIzaSyDZx5zZ8axamaVKBJEmnCu2BCevRlOG4Kg"
+        },
+        {
+          "current_key": "AIzaSyCd2Dv7N-HWYUdLed-562wymsmL7kiZXGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1070933695487-keev56pe7fkdfodruo0lfljigovtc37l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070933695487:android:e2b374cf057791fa9965ca",
+        "android_client_info": {
+          "package_name": "com.myticketgh.pickapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1070933695487-keev56pe7fkdfodruo0lfljigovtc37l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkPYZoGOaWtoj5TqnXtmJswoR25-xCNlU"
+        },
+        {
+          "current_key": "AIzaSyDZx5zZ8axamaVKBJEmnCu2BCevRlOG4Kg"
+        },
+        {
+          "current_key": "AIzaSyCd2Dv7N-HWYUdLed-562wymsmL7kiZXGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1070933695487-keev56pe7fkdfodruo0lfljigovtc37l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070933695487:android:e691722f7560fd8d9965ca",
+        "android_client_info": {
+          "package_name": "com.pickappexpress_driver.pickapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1070933695487-keev56pe7fkdfodruo0lfljigovtc37l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkPYZoGOaWtoj5TqnXtmJswoR25-xCNlU"
+        },
+        {
+          "current_key": "AIzaSyDZx5zZ8axamaVKBJEmnCu2BCevRlOG4Kg"
+        },
+        {
+          "current_key": "AIzaSyCd2Dv7N-HWYUdLed-562wymsmL7kiZXGM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1070933695487-keev56pe7fkdfodruo0lfljigovtc37l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

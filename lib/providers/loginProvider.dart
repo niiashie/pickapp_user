@@ -8,7 +8,6 @@ import 'package:pickappuser/constants/utils.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/http.service.dart';
 import 'package:pickappuser/services/router.service.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginProvider with ChangeNotifier{
@@ -127,6 +126,10 @@ class LoginProvider with ChangeNotifier{
 
   void saveUserData(String token,String id,String name,String phone,String mail,String avatar,String tokenExpiry) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    List<String>notificationDates = new List<String>();
+    List<String>notificationBody = new List<String>();
+    preferences.setStringList("notificationDates", notificationDates);
+    preferences.setStringList("notificationBody", notificationBody);
     preferences.setString(LocalStorageName.bearerToken, token);
     preferences.setString( LocalStorageName.tokenExpiration, tokenExpiry);
     preferences.setString( LocalStorageName.userId,id);

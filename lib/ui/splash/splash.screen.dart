@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/routes.dart';
 import 'package:pickappuser/services/auth.service.dart';
-import 'package:pickappuser/services/data.service.dart';
 import 'package:pickappuser/services/router.service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pickappuser/constants/local_storage_name.dart';

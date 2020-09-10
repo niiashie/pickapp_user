@@ -2,6 +2,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pickappuser/services/dialog.service.dart';
+import 'package:pickappuser/ui/shared/dialogs/log_out.dialog.dart';
 import 'package:pickappuser/ui/shared/nav_drawer.dart';
 
 
@@ -50,6 +52,17 @@ class _BaseScreenState extends State<BaseScreen> {
               color: Colors.white, //change your color here
             ),
             elevation: widget.hasElevation ? theme.appBarTheme.elevation : 0,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.power_settings_new,
+                  color: Colors.white,
+                ),
+                onPressed: (){
+                  DialogService().showCustomDialog(context: context, customDialog: LogOutDialog());
+                },
+              )
+            ],
           ),
           body: widget.body,
           drawer: NavDrawer(),

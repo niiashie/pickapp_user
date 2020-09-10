@@ -11,7 +11,7 @@ class AppConstants {
       DrawerItem(
         title: "Orders",
         icon: Icons.timelapse,
-        route: AppRoutes.loginScreenRoute,
+        route: AppRoutes.dashboardRoute,
       ),
       DrawerItem(
           title: "Create Order",
@@ -21,17 +21,12 @@ class AppConstants {
       DrawerItem(
         title: "Notifications",
         icon: Icons.notifications,
-        route: AppRoutes.loginScreenRoute,
+        route: AppRoutes.notificationRoute,
       ),
       DrawerItem(
         title: "Settings",
         icon: Icons.settings,
-        route: AppRoutes.loginScreenRoute,
-      ),
-      DrawerItem(
-        title: "Logout",
-        icon: Icons.lock,
-        route: AppRoutes.loginScreenRoute,
+        route: AppRoutes.settingsRoute,
       ),
 
     ];

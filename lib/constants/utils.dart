@@ -68,6 +68,15 @@ class Utils {
     progressDialog.hide();
   }
 
+  static String getTime(String dateTime, {bool showTime}) {
+    DateTime parsedDateTime = DateTime.parse(dateTime);
+    String format = "hh:mm a";
+    if(showTime != null){
+      format+=" hh:mm a";
+    }
+    return DateFormat(format).format(parsedDateTime);
+  }
+
   static String getFileName(File file) {
     // if(await file.exists()){
     //   //To get file name without extension

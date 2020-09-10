@@ -668,7 +668,10 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
 
     // TODO: implement build
     return WillPopScope(
-      onWillPop:(){vm.reset(context);},
+      onWillPop:(){
+        vm.reset(context);
+        return Future.delayed(Duration(microseconds: 1), () => false);
+        },
       child: Scaffold(
         appBar: AppBar(
           title: Text(

@@ -311,10 +311,11 @@ class NewOrderProvider extends ChangeNotifier{
      notifyListeners();
 
      if(senderFullNameError == false && senderPhoneNumberError == false && pickUpLocationError == false){
-       firstPageVisible = false;
+       /*firstPageVisible = false;
        secondPageVisible = false;
        thirdPageVisible = true;
-       notifyListeners();
+       notifyListeners();*/
+       tabController.animateTo(2);
      }
   }
 

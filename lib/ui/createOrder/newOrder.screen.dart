@@ -7,6 +7,7 @@ import 'package:pickappuser/models/recipient_item.dart';
 import 'package:pickappuser/providers/newOrder.provider.dart';
 import 'package:pickappuser/services/router.service.dart';
 import 'package:pickappuser/ui/createOrder/widget/carrierDetails.screen.dart';
+import 'package:pickappuser/ui/createOrder/widget/recipientDetails.screen.dart';
 import 'package:pickappuser/ui/createOrder/widget/senderDetails.screen.dart';
 import 'package:pickappuser/ui/shared/myPageIndicator.dart';
 import 'package:pickappuser/ui/shared/myTextInput.dart';
@@ -27,7 +28,7 @@ class _NewOrderScreenState  extends State<NewOrderScreen> with TickerProviderSta
     vm1 = context.read<NewOrderProvider>();
     vm1.tabController = TabController(
       vsync: this,
-      length: 2,
+      length: 3,
     );
     super.initState();
   }
@@ -391,6 +392,7 @@ class _NewOrderScreenState  extends State<NewOrderScreen> with TickerProviderSta
         children: [
           CarrierDetailsScreen(),
           SenderDetailsScreen(),
+          RecipientsScreen()
         ],
     );
 

@@ -11,6 +11,7 @@ class Order2{
   String orderQuantity;
   String orderCharge;
   String orderCode;
+  String orderId;
   String orderFragile;
   String orderStatus;
   String senderName;
@@ -36,7 +37,8 @@ class Order2{
     @required pickUpLocation,
     @required pickUpCode,
     @required pickUpDateTime,
-    @required recipients
+    @required recipients,
+    @required orderId
   }){
     this.packageSize = packageSize;
     this.packageImageUrl = packageImageUrl;
@@ -54,5 +56,6 @@ class Order2{
     this.pickUpCode = pickUpCode;
     this.pickUpDateTime = pickUpDateTime;
     this.recipients = recipients;
+    this.orderId = orderId;
   }
 }

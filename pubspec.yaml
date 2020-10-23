@@ -68,6 +68,11 @@ flutter:
     - assets/images/default_user_avatar.png
     - assets/images/checked.png
     - assets/images/dot.png
+    - assets/images/user_placeholder.jpg
+    - assets/images/scooter.png
+    - assets/images/success.png
+    - assets/images/warning.png
+    - assets/images/failed2.png
     - assets/images/mtn.png
     - assets/images/tigo.png
     - assets/images/vodafone.png

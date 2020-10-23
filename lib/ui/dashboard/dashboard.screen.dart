@@ -102,6 +102,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
         int quantity = object['quantity'];
         String orderQuantity = "$quantity";
         String serviceCharge = object['cost'];
+        int orderId = object['id'];
         String orderCode = object['code'];
         String orderFragile = "";
         String orderStatus = object['status'];
@@ -152,7 +153,8 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
             pickUpLocation: pickupLocationAddress,
             pickUpCode: pickUpCode,
             pickUpDateTime: pickUpTime,
-            recipients: myRecipients
+            recipients: myRecipients,
+            orderId: "$orderId"
           )
         );
 
@@ -227,6 +229,12 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
       var statusColor;
       if(content.orderStatus == "awaiting-pickup"){
         statusColor = Colors.red;
+      }
+      else if(content.orderStatus == "accepted"){
+        statusColor = Colors.amber;
+      }
+      else if(content.orderStatus == "delivered"){
+        statusColor = Colors.green;
       }
       else{
         statusColor = Colors.grey;

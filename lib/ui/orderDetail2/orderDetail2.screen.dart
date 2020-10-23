@@ -22,10 +22,22 @@ class OrderDetail2ScreenState extends State<OrderDetail2Screen>{
   OrderDetail2ScreenState(this.orders);
 
   @override
+  void initState() {
+    var vm = context.read<DashBoardProvider>();
+    vm.initializeProvider(orders);
+    if(orders.orderStatus == "delivered"){
+      vm.orderStatusList.add("Order successfully placed");
+      vm.orderStatusList.add("Order matched to rider");
+      vm.orderStatusList.add("Order delivered to recepients");
+      vm.orderStatusList.add("Order completed");
+    }
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     final vm = Provider.of<DashBoardProvider>(context);
-    double device_width = MediaQuery.of(context).size.width;
-    double device_height = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
+    double deviceHeight = MediaQuery.of(context).size.height;
 
     String charge = orders.orderCharge;
     String totalCharge = "GHS $charge";
@@ -656,11 +668,214 @@ class OrderDetail2ScreenState extends State<OrderDetail2Screen>{
       ),
     );
 
+    final riderCard = Visibility(
+      visible:vm.showRiderCard,
+      child: Container(
+        margin: EdgeInsets.only(left:20,right:20,top:20),
+
+        child: Card(
+          elevation: 3,
+          color:Colors.white,
+          child: Column(
+            children: [
+              Container(
+                height: 70,
+                child: Stack(
+                  children: <Widget>[
+                    Visibility(
+                      visible:vm.riderCardExpanded,
+                      child:  Align(
+                        alignment: Alignment.bottomCenter,
+                        child:Divider(color: Colors.grey,),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(width: 20,),
+                          Text(
+                            "Rider Details",
+                            style: TextStyle(
+                                color: Colors.purple[900],
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: Center(
+                              child: vm.riderCardExpanded?
+                              IconButton(
+                                icon: Icon(Icons.arrow_drop_down,color: Colors.purple[900],size: 20,),
+                                onPressed: (){
+                                  // ignore: unnecessary_statements
+                                  vm.riderCardArrowClicked();
+                                },
+                              ):IconButton(
+                                icon:Icon(Icons.arrow_drop_up,color: Colors.purple[900],size: 20,),
+                                onPressed: (){
+                                  vm.riderCardArrowClicked();
+                                },
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 20,)
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Visibility(
+                visible: vm.riderCardExpanded,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 100,
+                      child: Center(
+                        child: CircleAvatar(
+                          radius: 40,
+                          backgroundImage: vm.riderImage==""?AssetImage("assets/images/user_placeholder.jpg"):NetworkImage(vm.riderImage),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left:10),
+                      height: 65,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Container(
+                            width: 80,
+                            child: Center(
+                              child: Image.asset(AppImages.user,
+                                height: 20,width: 20,),
+                            ),
+                          ),
+                          Expanded(
+                            child:  Container(
+                              child: Stack(
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Divider(color: Colors.grey,),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        SizedBox(width: 15,),
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+
+                                            SizedBox(height: 10,),
+                                            Text(
+                                              vm.riderName,
+                                              style: TextStyle(color:Colors.black),
+                                            ),
+                                            SizedBox(height: 5,),
+                                            Text(
+                                              vm.riderPhone,
+                                              style: TextStyle(color:Colors.black),
+                                            ),
+
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left:10),
+                      height: 65,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          Container(
+                            width: 80,
+                            child: Center(
+                              child: Image.asset("assets/images/scooter.png",
+                                height: 20,width: 20,),
+                            ),
+                          ),
+                          Expanded(
+                            child:  Container(
+                              child: Stack(
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Divider(color: Colors.grey,),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topLeft,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        SizedBox(width: 15,),
+                                        Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+
+                                            SizedBox(height: 10,),
+                                            Text(
+                                              vm.riderVehicleMake,
+                                              style: TextStyle(color:Colors.black),
+                                            ),
+                                            SizedBox(height: 5,),
+                                            Text(
+                                              vm.riderVehicleRegistration,
+                                              style: TextStyle(color:Colors.black),
+                                            ),
+
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
+        ),
+      ),
+    );
+
+
     Widget recipientItem(Recipient content,index){
       int index2 = index + 1;
       String title = "Recipient $index2";
       return Container(
-        width: device_width,
+        width: deviceWidth,
         margin: EdgeInsets.only(left:20,right: 20,top:10),
         child: Card(
           elevation: 3,
@@ -922,6 +1137,252 @@ class OrderDetail2ScreenState extends State<OrderDetail2Screen>{
         )
     );
 
+    final orderStatusCard2 = Visibility(
+      visible: vm.orderStatusList2.length>0?true:false,
+      child: Container(
+        width: deviceWidth,
+        child: Stack(
+          children: [
+            Container(
+              width: deviceWidth,
+              height: 50,
+              color: Colors.purple[900],
+            ),
+            Container(
+              margin: EdgeInsets.only(left:20,right:20,top:20),
+              child: Card(
+                color: Colors.white,
+                elevation: 3,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      height: 70,
+                      child: Stack(
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child:Divider(color: Colors.grey,),
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(width: 20,),
+                                Text(
+                                  "Order Status",
+                                  style: TextStyle(
+                                      color: Colors.purple[900],
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.all(10),
+                      height: vm.orderStatusList2.length*62.0,
+                      child: ListView.builder(
+                        itemCount: vm.orderStatusList2.length??0,
+                        itemBuilder: (context,index){
+                          return Container(
+                            height: 60,
+                            child: Stack(
+                              children: [
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Container(
+                                    width: 50,
+                                    height: 60,
+                                    child: vm.orderStatusList2.length==1?
+                                    Center(
+                                      child:Image.asset("assets/images/checked.png",height: 20,width: 20,),
+                                    ):Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        index == 0?SizedBox(height: 20,): Container(
+                                          width: 2,
+                                          height: 20,
+                                          color: Colors.purple[900],
+                                        ),
+                                        Image.asset("assets/images/checked.png",height: 20,width: 20,),
+                                        Visibility(
+                                          visible: (index == vm.orderStatusList2.length-1)?false:true,
+                                          child: Container(
+                                            width: 2,
+                                            height: 20,
+                                            color: Colors.purple[900],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Align(
+                                    alignment: Alignment.centerLeft,
+                                    child:Container(
+                                      margin: EdgeInsets.only(left:60),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            vm.orderStatusList2[index].date,
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                              color: Colors.grey
+                                            ),
+                                          ),
+                                          SizedBox(height: 5,),
+                                          Text(
+                                            vm.orderStatusList2[index].action,
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                              color: Colors.black
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    )
+                                )
+                              ],
+                            ),
+                          );
+                        }
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+
+    final orderStatusCard = Visibility(
+      visible: vm.orderStatusList.length==0?false:true,
+      child:  Container(
+        width: deviceWidth,
+        child: Stack(
+          children: [
+            Container(
+              width: deviceWidth,
+              height: 50,
+              color: Colors.purple[900],
+            ),
+            Container(
+              margin: EdgeInsets.only(left:20,right:20,top:20),
+              child: Card(
+                elevation: 3,
+                color: Colors.white,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      height: 70,
+                      child: Stack(
+                        children: <Widget>[
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child:Divider(color: Colors.grey,),
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              children: <Widget>[
+                                SizedBox(width: 20,),
+                                Text(
+                                  "Order Status",
+                                  style: TextStyle(
+                                      color: Colors.purple[900],
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Visibility(
+                      visible: orders.orderStatus=="delivered"?true:false,
+                      child:  Container(
+                        margin: EdgeInsets.all(10),
+                        height: vm.orderStatusList.length*52.0,
+                        child: ListView.builder(
+                            itemCount: vm.orderStatusList.length??0,
+                            itemBuilder: (context,index){
+                              return Container(
+                                  height: 50,
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Container(
+                                          width: 50,
+                                          height: 50,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              index == 0?SizedBox(height: 15,): Container(
+                                                width: 2,
+                                                height: 15,
+                                                color: Colors.purple[900],
+                                              ),
+                                              Image.asset("assets/images/checked.png",height: 20,width: 20,),
+                                              Visibility(
+                                                visible: (index == vm.orderStatusList.length-1)?false:true,
+                                                child: Container(
+                                                  width: 2,
+                                                  height: 15,
+                                                  color: Colors.purple[900],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Align(
+                                          alignment: Alignment.centerLeft,
+                                          child:Container(
+                                            margin: EdgeInsets.only(left:60),
+                                            child: Text(
+                                                vm.orderStatusList[index]
+                                            ),
+                                          )
+                                      )
+
+                                    ],
+                                  )
+                              );
+                            }
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: orders.orderStatus!="delivered"?true:false,
+                      child: Container(
+
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+
+
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
@@ -934,10 +1395,11 @@ class OrderDetail2ScreenState extends State<OrderDetail2Screen>{
           color: Colors.white, //change your color here
         ),
         backgroundColor: Colors.purple[900],
+        elevation: 0,
       ),
       body: Container(
-          width: device_width,
-          height: device_height,
+          width: deviceWidth,
+          height: deviceHeight,
           color:Colors.white,
           child: ListView.builder(
             itemCount: 1,
@@ -945,8 +1407,11 @@ class OrderDetail2ScreenState extends State<OrderDetail2Screen>{
             itemBuilder:(context,index){
               return Column(
                 children: <Widget>[
+                  orderStatusCard,
+                  orderStatusCard2,
                   ordersCard,
                   senderCard,
+                  riderCard,
                   SizedBox(height:10),
                   recipientList
                 ],

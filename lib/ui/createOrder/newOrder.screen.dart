@@ -6,7 +6,8 @@ import 'package:pickappuser/constants/app_constants.dart';
 import 'package:pickappuser/models/recipient_item.dart';
 import 'package:pickappuser/providers/newOrder.provider.dart';
 import 'package:pickappuser/services/router.service.dart';
-import 'package:pickappuser/ui/createOrder/widget/recipient.card.dart';
+import 'package:pickappuser/ui/createOrder/widget/carrierDetails.screen.dart';
+import 'package:pickappuser/ui/createOrder/widget/senderDetails.screen.dart';
 import 'package:pickappuser/ui/shared/myPageIndicator.dart';
 import 'package:pickappuser/ui/shared/myTextInput.dart';
 import 'package:provider/provider.dart';
@@ -16,12 +17,26 @@ class NewOrderScreen extends StatefulWidget{
   @override
   _NewOrderScreenState createState() => _NewOrderScreenState();
 }
-class _NewOrderScreenState  extends State<NewOrderScreen>{
+class _NewOrderScreenState  extends State<NewOrderScreen> with TickerProviderStateMixin{
+
+  NewOrderProvider vm1;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    vm1 = context.read<NewOrderProvider>();
+    vm1.tabController = TabController(
+      vsync: this,
+      length: 2,
+    );
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<NewOrderProvider>(context);
      double device_width = MediaQuery.of(context).size.width;
      double device_height = MediaQuery.of(context).size.height;
+
 
 
     final firstPageIndicator = PageIndicator();
@@ -173,6 +188,8 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
         ),
       ),
     );
+
+
 
     final secondScreen = SingleChildScrollView(
       child: Visibility(
@@ -368,6 +385,14 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
       ),
     );
 
+    final tabBarView = TabBarView(
+        physics: NeverScrollableScrollPhysics(),
+        controller: vm1.tabController,
+        children: [
+          CarrierDetailsScreen(),
+          SenderDetailsScreen(),
+        ],
+    );
 
 
 
@@ -665,7 +690,6 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
 
 
 
-
     // TODO: implement build
     return WillPopScope(
       onWillPop:(){
@@ -684,17 +708,19 @@ class _NewOrderScreenState  extends State<NewOrderScreen>{
           ),
           backgroundColor: Colors.purple[900],
         ),
-        body: Container(
+        body:
+        Container(
           height: device_height,
           width: device_width,
           color: Colors.white,
-          child: Stack(
+          child: tabBarView
+          /*Stack(
             children: <Widget>[
               firstScreen,
               secondScreen,
               thirdScreen
             ],
-          ),
+          ),*/
         ),
 
 

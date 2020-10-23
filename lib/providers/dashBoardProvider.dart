@@ -1,25 +1,35 @@
 
-import 'dart:convert';
-
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pickappuser/config/locator.dart';
-import 'package:pickappuser/constants/images.dart';
-import 'package:pickappuser/constants/utils.dart';
-import 'package:pickappuser/models/carrier_item.dart';
-import 'package:pickappuser/models/order_item.dart';
 import 'package:pickappuser/models/order_item2.dart';
 import 'package:pickappuser/models/order_recipient.dart';
-import 'package:pickappuser/models/package_item.dart';
+import 'package:pickappuser/models/order_status.dart';
 import 'package:pickappuser/services/http.service.dart';
 import 'package:pickappuser/services/router.service.dart';
-import 'package:provider/provider.dart';
+
 
 class DashBoardProvider extends ChangeNotifier{
   final requests = locator<HttpService>();
   final router = locator<RouterService>();
   bool loading = true;
   bool senderCardExpanded = false;
+  bool riderCardExpanded = false;
+  Order2 selectedOrder;
+  bool showRiderCard;
   List<Order2>orders = [];
+  String riderImage="",riderName="",riderPhone="",riderVehicleMake="",riderVehicleRegistration="";
+  List<String>orderStatusList = new List();
+  List<OrderStatus>orderStatusList2 = new List();
+
+  void initializeProvider(Order2 order2){
+    this.selectedOrder = order2;
+    showRiderCard = false;
+    orderStatusList.clear();
+    orderStatusList2.clear();
+    checkForRider();
+    notifyListeners();
+  }
 
   void getUserOrders()async{
     var response = await requests.getOrders();
@@ -55,6 +65,11 @@ class DashBoardProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void riderCardArrowClicked(){
+    riderCardExpanded = !riderCardExpanded;
+    notifyListeners();
+  }
+
   void recipientCardArrowClicked(List<Recipient>recipientList, index){
     getRecipientsHeight(recipientList);
     recipientList[index].cardExpanded = !recipientList[index].cardExpanded;
@@ -76,4 +91,46 @@ class DashBoardProvider extends ChangeNotifier{
     return total.toDouble();
   }
 
+  void checkForRider(){
+    final matchingReference = FirebaseDatabase.instance.reference().child("Flutter").child("Matchings")
+        .child(selectedOrder.orderId);
+    matchingReference.once().then((DataSnapshot snapshot){
+      if(snapshot.value!=null){
+        showRiderCard = true;
+        //snapshot.value['']
+        riderImage = snapshot.value['driverImage'];
+        riderName = snapshot.value['driverName'];
+        riderPhone = snapshot.value['driverPhone'];
+        riderVehicleMake = snapshot.value['vehicleName'];
+        riderVehicleRegistration = snapshot.value['vehicleRegistration'];
+
+        notifyListeners();
+      }
+      else{
+        showRiderCard = false;
+        notifyListeners();
+      }
+    }).then((value) => checkOrderStatus());
+  }
+
+  void checkOrderStatus(){
+    print("Order ID: ${selectedOrder.orderId}");
+     final orderStatusReference = FirebaseDatabase.instance.reference().child("Flutter").child("Order Tracking")
+         .child(selectedOrder.orderId);
+     orderStatusReference.onValue.listen((event) {
+       orderStatusList2.clear();
+       Map data2 = event.snapshot.value;
+       if(data2!=null){
+         List item = [];
+         data2.forEach((index, data) => item.add({"key": index, ...data}));
+         print("ResultListen:${event.snapshot.value}");
+         for(int j=0;j<item.length;j++){
+           print("Time: ${item[j]['time']}");
+           orderStatusList2.add(new OrderStatus(date: item[j]['time'], action: item[j]['status']));
+         }
+         notifyListeners();
+       }
+     });
+
+  }
 }

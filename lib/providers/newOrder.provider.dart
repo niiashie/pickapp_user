@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/animations.dart';
@@ -71,7 +72,7 @@ class NewOrderProvider extends ChangeNotifier{
    final senderPhoneCtrl = TextEditingController();
    final pickUpLocationDesCtrl = TextEditingController();
    final pickUpInstructionCtrl = TextEditingController();
-
+   TabController tabController;
 
 
    //Selected Values
@@ -290,17 +291,16 @@ class NewOrderProvider extends ChangeNotifier{
 
 
     if(packQuantityError== false && carrierTypeError == false && packageSizeError == false && itemDescriptionError == false){
-      firstPageVisible = false;
+      /*firstPageVisible = false;
       secondPageVisible = true;
       thirdPageVisible = false;
-      notifyListeners();
+      notifyListeners(); */
+      tabController.animateTo(1);
     }
   }
 
   void navigateToFirstPage(){
-    firstPageVisible = true;
-    secondPageVisible = false;
-    thirdPageVisible = false;
+    tabController.animateTo(0);
     notifyListeners();
   }
 
@@ -923,7 +923,7 @@ class NewOrderProvider extends ChangeNotifier{
     String bearerToken = _prefs.getString(LocalStorageName.bearerToken);
     String senderImg = _prefs.getString(LocalStorageName.userAvatar);
 
-    if(response.statusCode == 200){
+    if(response.statusCode < 400){
       Map<String, dynamic> body = jsonDecode(response.body);
 
       String orderId = body['order_id'].toString() ?? null;
@@ -935,8 +935,6 @@ class NewOrderProvider extends ChangeNotifier{
     }else{
       print("Error");
     }
-
-
 
 
   }
@@ -976,7 +974,7 @@ class NewOrderProvider extends ChangeNotifier{
         'senderPhoto':senderImgURL,
         'serviceCharge':serviceCharge
       }).then((value) => {
-        pushRecipientsToFirebase(context,orderId),
+        updateOrderStatus(context,orderId),
         getCertifiedRecipients()
       });
     }
@@ -995,6 +993,19 @@ class NewOrderProvider extends ChangeNotifier{
     });
     Utils.getProgressBar(context, "Loading,please wait..", ""); */
 
+  }
+
+  void updateOrderStatus(BuildContext context,String orderId){
+    final  orderTrackingReference = FirebaseDatabase.instance.reference().child("Flutter").child("Order Tracking")
+        .child(orderId);
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('kk:mm EEE d MMM').format(now);
+    orderTrackingReference.child("a1").set(
+        {
+          "time":formattedDate,
+          "status":"Order placed successfully"
+        }
+    ).then((value) => pushRecipientsToFirebase(context,orderId));
   }
 
   void pushRecipientsToFirebase(BuildContext context,String orderId)async{

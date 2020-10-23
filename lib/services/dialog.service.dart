@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pickappuser/ui/shared/dialogs/custom_alert.dialog.dart';
 import 'package:pickappuser/ui/shared/dialogs/date_time_picker.dialog.dart';
+import 'package:pickappuser/ui/shared/dialogs/my_custom_alert.dialog.dart';
 
 
 enum AlertDialogType { success, error, warning, custom }
@@ -23,13 +24,13 @@ class DialogService {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
+          backgroundColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          child: CustomAlertDialog(
+          child: MyCustomAlertDialog(
             message: message,
             type: type,
-            title: title,
             okayText: okayText,
             cancelText: cancelText,
             showCancelBtn: showCancelBtn,

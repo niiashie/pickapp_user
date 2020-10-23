@@ -2,9 +2,13 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pickappuser/config/locator.dart';
+import 'package:pickappuser/constants/routes.dart';
 import 'package:pickappuser/services/dialog.service.dart';
+import 'package:pickappuser/services/router.service.dart';
 import 'package:pickappuser/ui/shared/dialogs/log_out.dialog.dart';
 import 'package:pickappuser/ui/shared/nav_drawer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class BaseScreen extends StatefulWidget {
@@ -31,6 +35,7 @@ class _BaseScreenState extends State<BaseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var router = locator<RouterService>();
      ThemeData theme = Theme.of(context);
     final header = Text(
       widget.title,
@@ -59,7 +64,22 @@ class _BaseScreenState extends State<BaseScreen> {
                   color: Colors.white,
                 ),
                 onPressed: (){
-                  DialogService().showCustomDialog(context: context, customDialog: LogOutDialog());
+                  //DialogService().showCustomDialog(context: context, customDialog: LogOutDialog());
+                  DialogService().showAlertDialog(context: context,
+                      message: "Do you really want to log out?",
+                      type: AlertDialogType.warning,
+                      okayText: "Yes",
+                      cancelText: "No",
+                      onOkayBtnTap: ()async{
+                        SharedPreferences _prefs = await SharedPreferences.getInstance();
+                        _prefs.clear();
+                        router.navigateTo(AppRoutes.loginScreenRoute);
+                      },
+                    onCancelBtnTap: (){
+                      Navigator.pop(context);
+                    }
+
+                  );
                 },
               )
             ],

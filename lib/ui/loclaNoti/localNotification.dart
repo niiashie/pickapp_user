@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pickappuser/constants/images.dart';
-import 'package:pickappuser/models/carrier_item.dart';
+
 
 class LocalNotification extends StatefulWidget{
   @override
@@ -21,7 +21,6 @@ class LocalNotificationState extends State<LocalNotification>{
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initializing();
   }
@@ -87,6 +86,7 @@ class LocalNotificationState extends State<LocalNotification>{
 
 
 
+  // ignore: unused_element
   Future<void> _showNotificationMediaStyle(String title,String message) async {
     var largeIconPath = await _downloadAndSaveFile(
         AppImages.bannerURL, 'largeIcon');
@@ -106,6 +106,7 @@ class LocalNotificationState extends State<LocalNotification>{
 
 
 
+  // ignore: missing_return
   Future onSelectNotification(String payLoad){
     if(payLoad !=null){
       print(payLoad);
@@ -134,15 +135,17 @@ class LocalNotificationState extends State<LocalNotification>{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    
     return Scaffold(
       body: Container(
         width: double.infinity,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            FlatButton(
-              color: Colors.blue,
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.blue
+              ),
               onPressed:_showNotifications,
               child: Text(
                 "Show Notification",

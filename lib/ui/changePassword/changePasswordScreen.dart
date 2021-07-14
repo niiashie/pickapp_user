@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:pickappuser/ui/shared/myTextInput.dart';
 
 class ChangePasswordScreen extends StatefulWidget{
@@ -50,34 +51,21 @@ class _ChangePasswordState extends State<ChangePasswordScreen>{
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Expanded(
-            child: ButtonTheme(
-              height: 50,
-              child: RaisedButton(
-                color: Colors.amber[900],
-                child: Text(
-                  "Change Password",
-                  style: TextStyle(
-                      color: Colors.white
-                  ),
-                ),
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                        color: Colors.amber[900],
-                        width: 1,
-                        style: BorderStyle.solid),
-                    borderRadius: BorderRadius.circular(5)),
-                onPressed: (){
+            child: CustomButton(
+              title: "Change Password",
+              onPressed: (){
 
-                },
-              ),
-            ),
+              },
+              height: 50,
+            )
+            
           )
         ],
       ),
     );
 
-    // TODO: implement build
     return WillPopScope(
+      // ignore: missing_return
       onWillPop: (){
         Navigator.pop(context);
       },

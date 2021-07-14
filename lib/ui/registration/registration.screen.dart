@@ -5,8 +5,8 @@ import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/images.dart';
 import 'package:pickappuser/constants/routes.dart';
 import 'package:pickappuser/providers/registrationProvider.dart';
-import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/router.service.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:pickappuser/ui/shared/myTextInput.dart';
 import 'package:provider/provider.dart';
 
@@ -26,9 +26,12 @@ class _RegisterScreenState extends State<RegisterScreen>{
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<RegistrationProvider>(context);
+    // ignore: non_constant_identifier_names
     double device_width = MediaQuery.of(context).size.width;
+
+    // ignore: non_constant_identifier_names
     double device_height = MediaQuery.of(context).size.height;
-    // TODO: implement build
+   
     return Scaffold(
        appBar: AppBar(
          title: Text("Registration",
@@ -155,45 +158,17 @@ class _RegisterScreenState extends State<RegisterScreen>{
               ),
               Container(
                 margin: EdgeInsets.only(top:20),
-                child: ButtonTheme(
-                  minWidth: 300,
+                child: CustomButton(
+                  setWidth: true,
+                  width: 300,
                   height: 50,
-                  child: RaisedButton(
-                    color: Colors.amber[900],
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                            color: Colors.amber[900],
-                            width: 1,
-                            style: BorderStyle.solid),
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Text(
-                      "Register",
-                      style: TextStyle(
-                          color:Colors.white
-                      ),
-                    ),
-                    onPressed: (){
+                  title: "Register",
+                  onPressed: (){
                       vm.registration(context);
-                     /* vm.registration().then((res){
-                         if(res!=null){
-                           if(res.code!=200){
-                             DialogService().showAlertDialog(
-                               context: context,
-                               type: AlertDialogType.error,
-                               message: res.message,
-                             );
-                           }else{
-                             DialogService().showAlertDialog(context: context, message:
-                             "Registration success, verify registration in your email", type: AlertDialogType.success,
-                                 okayText: "Login",onOkayBtnTap: (){
-                                   router.navigateTo(AppRoutes.loginScreenRoute);
-                              });
-                           }
-                         }
-                      });*/
-                    },
-                  ),
-                ),
+                  },
+                )
+                
+                
               ),
               Container(
                 width: 300,

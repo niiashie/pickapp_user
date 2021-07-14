@@ -2,8 +2,6 @@
 
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/services.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -35,6 +33,7 @@ class LocalNotificationService{
 
     //Check For FCM Token
     SharedPreferences _prefs = await SharedPreferences.getInstance();
+    // ignore: non_constant_identifier_names
     String FCMToken = _prefs.getString(LocalStorageName.FCMToken);
     if(FCMToken == null){
       _firebaseMessaging.getToken().then((token){
@@ -46,6 +45,7 @@ class LocalNotificationService{
 
   }
 
+  // ignore: missing_return
   Future onSelectNotification(String route){
     if(route !=null){
       router.navigateTo(route);

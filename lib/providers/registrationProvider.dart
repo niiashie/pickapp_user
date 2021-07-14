@@ -1,13 +1,9 @@
 
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/routes.dart';
-import 'package:pickappuser/constants/utils.dart';
-import 'package:pickappuser/models/api_response.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/http.service.dart';
 import 'package:pickappuser/services/router.service.dart';
@@ -84,7 +80,7 @@ class RegistrationProvider with ChangeNotifier{
 
 
   void registration(BuildContext context) async{
-    var response;
+    
     checkFirstName();
     checkLastName();
     checkPhoneNumber();
@@ -110,6 +106,7 @@ class RegistrationProvider with ChangeNotifier{
                router.navigateTo(AppRoutes.loginScreenRoute);
              });
        }else if(code == 400){
+         // ignore: non_constant_identifier_names
          String error_message = "";
          //Check Mail error
          if(body['email'] == null){

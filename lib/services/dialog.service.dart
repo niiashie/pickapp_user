@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pickappuser/ui/shared/dialogs/custom_alert.dialog.dart';
 import 'package:pickappuser/ui/shared/dialogs/date_time_picker.dialog.dart';
 import 'package:pickappuser/ui/shared/dialogs/my_custom_alert.dialog.dart';
 

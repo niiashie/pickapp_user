@@ -1,8 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pickappuser/config/locator.dart';
-import 'package:pickappuser/services/router.service.dart';
+
 
 class MyTextInputField extends StatefulWidget{
    final String label;
@@ -42,13 +41,13 @@ class MyTextInputField extends StatefulWidget{
 
 }
 
+// ignore: camel_case_types
 class _myTextInputFieldState extends State<MyTextInputField> {
   bool _obscureText = true;
   FocusNode myFocusNode = new FocusNode();
   @override
   Widget build(BuildContext context) {
-    double device_width = MediaQuery.of(context).size.width;
-    // TODO: implement build
+   
     return TextFormField(
         focusNode: myFocusNode,
         validator: widget.validator,

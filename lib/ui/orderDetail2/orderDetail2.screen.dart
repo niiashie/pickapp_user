@@ -1383,7 +1383,7 @@ class OrderDetail2ScreenState extends State<OrderDetail2Screen>{
     );
 
 
-    // TODO: implement build
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -1423,7 +1423,10 @@ class OrderDetail2ScreenState extends State<OrderDetail2Screen>{
   }
 
   String restructureDate(String date){
+    // ignore: non_constant_identifier_names
     String date_year  = date.substring(0,4);
+
+    // ignore: non_constant_identifier_names
     String date_month;
     if(date.substring(5,7).contains("01")){
       date_month = "Jan";
@@ -1450,6 +1453,7 @@ class OrderDetail2ScreenState extends State<OrderDetail2Screen>{
     }else{
       date_month = "Dec";
     }
+    // ignore: non_constant_identifier_names
     String date_day = date.substring(8,10);
     return date_day+" "+date_month+" "+date_year;
   }

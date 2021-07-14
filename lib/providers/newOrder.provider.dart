@@ -1,17 +1,16 @@
 
 import 'dart:convert';
-import 'dart:math';
+
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
+
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pickappuser/config/locator.dart';
-import 'package:pickappuser/constants/animations.dart';
 import 'package:pickappuser/constants/app_constants.dart';
 import 'package:pickappuser/constants/local_storage_name.dart';
 import 'package:pickappuser/constants/routes.dart';
@@ -26,16 +25,18 @@ import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/http.service.dart';
 import 'package:pickappuser/services/local.notification.service.dart';
 import 'package:pickappuser/services/router.service.dart';
+import 'package:pickappuser/ui/dashboard/dashboard.screen.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:pickappuser/ui/shared/myTextInput.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NewOrderProvider extends ChangeNotifier{
-  final GlobalKey<AnimatedListState> listKey = GlobalKey();
+  final GlobalKey<AnimatedListState> listKey = new GlobalKey<AnimatedListState>();
   final requests = locator<HttpService>();
   final router = locator<RouterService>();
 
   List<Recipient>certifiedRecipient = [];
-  //final localStorage = locator<StorageService>();
+  BuildContext carrierTypeContext;
 
 
   List<RecipientData>recipientList = [
@@ -51,8 +52,8 @@ class NewOrderProvider extends ChangeNotifier{
 
   var recipientSizedBoxHeight = 450.00;
   var orderSummaryRecipientsSizedBoxHeight =0.00;
-  String serviceCharge=null;
-  String orderCode="";
+  String serviceCharge = "";
+  String orderCode = "";
 
    bool packageFragile = false;
    bool iAmTheSender = false;
@@ -132,15 +133,15 @@ class NewOrderProvider extends ChangeNotifier{
     //Resetting List
     carrierTypes = [];
     packageSizes = [];
-    recipientList = [new RecipientData(title: "Recepient 1 Detail",
+    recipientList.clear();
+    recipientList.add(new RecipientData(title: "Recepient 1 Detail",
         fullnameController: new TextEditingController(),
         phoneController: new TextEditingController(),
         deliveryInstructionController: new TextEditingController(),
         deliveryLocationTextController: new TextEditingController(),
         cardExpanded: true, iAmTheRecipient: false,
         locationLatitude: "", locationLongitude:"", fullNameError: false,
-        phoneError: false, deliveryLocationError: false)
-    ];
+        phoneError: false, deliveryLocationError: false));
 
     //Resetting textControllers
     carrierTypeCtrl.text = "";
@@ -372,8 +373,8 @@ class NewOrderProvider extends ChangeNotifier{
 
 
 
-  void getCarrierTypes(BuildContext context) async{
-      Utils.getProgressBar(context, "Loading,please wait", "showProgress");
+  void getCarrierTypes() async{
+      Utils.getProgressBar(carrierTypeContext, "Loading,please wait", "showProgress");
       var response;
       response = await requests.getCarrierTypes();
       print(response);
@@ -383,11 +384,11 @@ class NewOrderProvider extends ChangeNotifier{
         carrierTypes.add(new CarrierType(carrierId: body[i]['id'], carrierName: body[i]['name'], carrierImageUrl: body[i]['photo']));
         print(body[i]['name']);
       }
-      Utils.getProgressBar(context, "Loading,please wait..", "");
+      Utils.getProgressBar(carrierTypeContext, "Loading,please wait..", "");
 
       //Showing Carrier Types Dialog
       DialogService().showCustomDialog(
-        context: context,
+        context: carrierTypeContext,
         customDialog: Container(
           height: 400,
           child: Column(
@@ -410,7 +411,7 @@ class NewOrderProvider extends ChangeNotifier{
                     crossAxisCount: 2,
                     children: List.generate(carrierTypes.length, (index){
                       return Center(
-                        child: CarrierTypeItem(carrierTypes[index],index,context),
+                        child: CarrierTypeItem(carrierTypes[index],index,carrierTypeContext),
                       );
                     })
                 ),
@@ -422,7 +423,7 @@ class NewOrderProvider extends ChangeNotifier{
                   child: InkWell(
                     child:  Text("CANCEL",style: TextStyle(color: Colors.grey),),
                     onTap: (){
-                      Navigator.pop(context);
+                      Navigator.pop(carrierTypeContext);
                     },
                   )
 
@@ -442,6 +443,7 @@ class NewOrderProvider extends ChangeNotifier{
 
 
 
+  // ignore: non_constant_identifier_names
   Widget CarrierTypeItem(CarrierType content,index,BuildContext context){
      return InkWell(
        child: Container(
@@ -546,6 +548,7 @@ class NewOrderProvider extends ChangeNotifier{
 
   }
 
+  // ignore: non_constant_identifier_names
   Widget PackageSizesItem(PackageSizes content,index,BuildContext context){
     return InkWell(
       child: Container(
@@ -855,7 +858,15 @@ class NewOrderProvider extends ChangeNotifier{
                    mainAxisSize: MainAxisSize.max,
                    children: <Widget>[
                      Expanded(
-                       child: ButtonTheme(
+                       child: CustomButton(
+                         title: "Pay",
+                         height: 50,
+                         onPressed: (){
+                           saveOrder(context);
+                         },
+                       )
+                       
+                       /*ButtonTheme(
                          height: 50,
                          child: RaisedButton(
                            color: Colors.amber[900],
@@ -875,7 +886,7 @@ class NewOrderProvider extends ChangeNotifier{
                              saveOrder(context);
                            },
                          ),
-                       ),
+                       ),*/
                      )
                    ],
                  ),
@@ -887,6 +898,7 @@ class NewOrderProvider extends ChangeNotifier{
   }
 
   void saveOrder(BuildContext context)async{
+    /*
     SharedPreferences pref = await SharedPreferences.getInstance();
     String apiToken = pref.getString(LocalStorageName.bearerToken);
     String firebaseToken = pref.getString(LocalStorageName.FCMToken);
@@ -921,7 +933,7 @@ class NewOrderProvider extends ChangeNotifier{
 
     //Get Storage Preferences
     SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String bearerToken = _prefs.getString(LocalStorageName.bearerToken);
+    //String bearerToken = _prefs.getString(LocalStorageName.bearerToken);
     String senderImg = _prefs.getString(LocalStorageName.userAvatar);
 
     if(response.statusCode < 400){
@@ -934,12 +946,16 @@ class NewOrderProvider extends ChangeNotifier{
       pushOrderToFirebase(context,orderId,apiToken,firebaseToken,orderCode,packageFragileBool,senderImg);
 
     }else{
-      print("Error");
+      //print("Error");\
+      Map<String, dynamic> errorBody = jsonDecode(response.body);
+      print("$errorBody \n Error");
+
     }
 
-
+    */
   }
 
+  // ignore: non_constant_identifier_names
   void pushOrderToFirebase(BuildContext context,String orderId,String senderToken,String FCMToken,
       String orderCode,String orderFragile,String senderImgURL)async{
     DateTime now = new DateTime.now();
@@ -1045,7 +1061,9 @@ class NewOrderProvider extends ChangeNotifier{
 
           LocalNotificationService().showNotificationMediaStyle("PickApp Order","Successfully placed order for pick up",AppRoutes.orderDetailsRoute);
           print("Present");
-          router.navigateTo(AppRoutes.dashboardRoute);
+          initializeVariables();
+          Navigator.push(context, MaterialPageRoute(builder: (context) => DashBoardScreen()));
+          //router.navigateTo(AppRoutes.dashboardRoute);
          // Utils.getProgressBar(context, "Loading,please wait..", "");
         }
       }

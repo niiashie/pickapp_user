@@ -17,6 +17,6 @@ class AppRoutes {
   static const String settingsRoute = "settingsRoute";
   static const String editProfileRoute = "editProfileRoute";
   static const String changePasswordRoute = "changePasswordRoute";
-
+  static const String createOrderRoute = "createOrderRoute";
 
 }

@@ -7,6 +7,7 @@ import 'package:pickappuser/providers/drawer.provider.dart';
 import 'package:pickappuser/services/data.service.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/router.service.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:pickappuser/ui/shared/myBaseScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,11 +21,11 @@ class _NotificationState extends State<NotificationScreen>{
   var vm;
   var router = locator<RouterService>();
   bool notificationEmpty = true;
-  List<String>notificationDates = new List<String>();
-  List<String>notificationMessages = new List<String>();
+  List<String>notificationDates = [];
+  List<String>notificationMessages = [];
   @override
   void initState() {
-    // TODO: implement initState
+    
     vm = context.read<DrawerStateInfo>();
     checkNotifications();
     super.initState();
@@ -47,6 +48,7 @@ class _NotificationState extends State<NotificationScreen>{
       index: 0,
     );
     router.navigateTo(AppRoutes.dashboardRoute);
+    // ignore: await_only_futures
     return await true;
   }
 
@@ -55,7 +57,6 @@ class _NotificationState extends State<NotificationScreen>{
     double deviceWidth = MediaQuery.of(context).size.width;
     double deviceHeight = MediaQuery.of(context).size.height;
 
-    // TODO: implement build
     return BaseScreen(
       title: "Notifications",
       hasElevation: true,
@@ -165,7 +166,7 @@ class _NotificationState extends State<NotificationScreen>{
                                                                 child: ButtonTheme(
                                                                   minWidth: 100,
                                                                   height: 40,
-                                                                  child: FlatButton(
+                                                                  child: TextButton(
                                                                     child: Text(
                                                                       "No",
                                                                       style: TextStyle(
@@ -182,26 +183,13 @@ class _NotificationState extends State<NotificationScreen>{
                                                             SizedBox(width: 10,),
                                                             Expanded(
                                                               child: Center(
-                                                                child: ButtonTheme(
-                                                                  minWidth: 100,
+                                                                child: CustomButton(
+                                                                  setWidth: true,
+                                                                  width: 100,
                                                                   height: 40,
-                                                                  child: RaisedButton(
-                                                                    color: Colors.amber[900],
-                                                                    child: Text(
-                                                                      "Yes",
-                                                                      style: TextStyle(
-                                                                          color: Colors.white
-                                                                      ),
-                                                                    ),
-                                                                    shape: RoundedRectangleBorder(
-                                                                        side: BorderSide(
-                                                                            color: Colors.amber[900],
-                                                                            width: 1,
-                                                                            style: BorderStyle.solid),
-                                                                        borderRadius: BorderRadius.circular(5)),
-                                                                    onPressed: ()async{
-
-                                                                        setState(() {
+                                                                  title: "Yes",
+                                                                  onPressed: ()async{
+                                                                    setState(() {
                                                                           notificationMessages.removeAt(index);
                                                                           notificationDates.removeAt(index);
                                                                         });
@@ -210,9 +198,10 @@ class _NotificationState extends State<NotificationScreen>{
                                                                          _prefs.setStringList("notificationBody", notificationMessages);
                                                                          checkNotifications();
                                                                          Navigator.pop(context);
-                                                                    },
-                                                                  ),
-                                                                ),
+                                                                  },
+                                                                )
+                                                                
+                                                          
                                                               ),
                                                             )
                                                           ],

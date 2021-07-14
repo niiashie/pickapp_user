@@ -10,5 +10,9 @@ class CarrierType{
     @required this.carrierId,
     @required this.carrierName,
     @required this.carrierImageUrl
-  });
+  }){
+    this.carrierId = carrierId;
+    this.carrierName = carrierName;
+    this.carrierImageUrl = carrierImageUrl;
+  }
 }

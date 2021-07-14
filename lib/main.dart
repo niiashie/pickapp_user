@@ -15,11 +15,10 @@ void main() {
 class MyApp extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return MultiProvider(
       providers:providers ,
       child: MaterialApp(
-       // debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false,
         title: 'PickApp',
         theme: theme.primaryTheme,
         navigatorKey: locator<RouterService>().navigatorKey,

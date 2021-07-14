@@ -9,6 +9,7 @@ class DataService{
     if (_prefs == null) _prefs = await SharedPreferences.getInstance();
   }
 
+  // ignore: unused_element
   _initRxPrefs() {
     if (_rxPrefs == null) _rxPrefs = RxSharedPreferences.getInstance();
   }

@@ -32,6 +32,7 @@ class Utils {
     return NumberFormat.currency(symbol: '\$').format(amount);
   }
 
+  // ignore: non_constant_identifier_names
   static void ShowError(String errorMessage,BuildContext context){
     DialogService().showAlertDialog(context: context, message:"You will loose all your entries",
         type: AlertDialogType.error,okayText: "Okay",
@@ -100,7 +101,7 @@ class Utils {
   static ApiResponse parseApiResponse(var response) {
     int code = response.statusCode;
     Map<String, dynamic> body = jsonDecode(response.body);
-    List errors = new List();
+    List errors = [];
     String message = "";
 
     switch (code) {

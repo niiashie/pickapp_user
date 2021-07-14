@@ -3,9 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:pickappuser/config/locator.dart';
-import 'package:pickappuser/constants/app_constants.dart';
 import 'package:pickappuser/constants/local_storage_name.dart';
-import 'package:pickappuser/constants/routes.dart';
 import 'package:pickappuser/providers/drawer.provider.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/http.service.dart';
@@ -21,6 +19,7 @@ class EditProfileProvider extends DrawerStateInfo{
   BuildContext pageContext;
   var router = locator<RouterService>();
 
+  // ignore: non_constant_identifier_names
   bool first_name_error = false,last_name_error = false, email_error = false, phone_error = false,loading = false;
 
   checkFirstName(){

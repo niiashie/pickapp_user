@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/providers/editProfileProvider.dart';
 import 'package:pickappuser/services/router.service.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:pickappuser/ui/shared/myTextInput.dart';
 import 'package:provider/provider.dart';
 
@@ -78,27 +79,15 @@ class _EditProfileScreenState extends State<EditProfileScreen>{
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Expanded(
-            child: ButtonTheme(
+            child: CustomButton(
               height: 50,
-              child: RaisedButton(
-                color: Colors.amber[900],
-                child: Text(
-                  "Update Account",
-                  style: TextStyle(
-                      color: Colors.white
-                  ),
-                ),
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                        color: Colors.amber[900],
-                        width: 1,
-                        style: BorderStyle.solid),
-                    borderRadius: BorderRadius.circular(5)),
-                onPressed: (){
-                   vm.updateProfileDetail(context);
-                },
-              ),
-            ),
+              title:  "Update Account",
+              onPressed: (){
+                vm.updateProfileDetail(context);
+              },
+            )
+            
+            
           )
         ],
       ),
@@ -150,8 +139,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>{
       ),
     );
 
-    // TODO: implement build
+   
     return WillPopScope(
+      // ignore: missing_return
       onWillPop: (){
         Navigator.pop(context);
         //router.navigateTo(AppRoutes.settingsRoute);

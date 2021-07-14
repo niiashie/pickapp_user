@@ -12,11 +12,13 @@ import 'package:pickappuser/services/router.service.dart';
 import 'package:provider/provider.dart';
 
 
+// ignore: must_be_immutable
 class NavDrawer extends StatelessWidget {
   final List<DrawerItem> drawerItems = AppConstants.drawerItems();
 
   final router = locator<RouterService>();
  // final localStorage = locator<MyStorageService>();
+  // ignore: non_constant_identifier_names
   double device_width;
 
   @override

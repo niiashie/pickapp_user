@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pickappuser/constants/app_constants.dart';
 import 'package:pickappuser/models/recipient_item.dart';
 import 'package:pickappuser/providers/newOrder.provider.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:pickappuser/ui/shared/myPageIndicator.dart';
 import 'package:pickappuser/ui/shared/myTextInput.dart';
 import 'package:provider/provider.dart';
@@ -194,6 +195,7 @@ class RecipientsScreenState extends State<RecipientsScreen>{
                         key: vm.listKey,
                         initialItemCount: vm.recipientList.length,
                         itemBuilder: (context, index, animation) {
+                          print("Array Length: ${vm.recipientList.length}");
                           // Breaking the row widget out as a method so that we can
                           // share it with the _removeSingleItem() method.
                           return recipientListItem(vm.recipientList[index],index);
@@ -214,27 +216,14 @@ class RecipientsScreenState extends State<RecipientsScreen>{
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Expanded(
-                        child: ButtonTheme(
+                        child: CustomButton(
                           height: 50,
-                          child:RaisedButton(
-                            color: Colors.amber[900],
-                            child: Text(
-                              "ADD NEW RECIPIENT",
-                              style: TextStyle(
-                                  color: Colors.white
-                              ),
-                            ),
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    color: Colors.amber[900],
-                                    width: 1,
-                                    style: BorderStyle.solid),
-                                borderRadius: BorderRadius.circular(5)),
-                            onPressed: (){
-                              vm.addToRecipientCard();
-                            },
-                          ),
-                        ),
+                          title:  "ADD NEW RECIPIENT",
+                          onPressed: (){
+                             vm.addToRecipientCard();
+                          },
+                        )
+                      
                       )
                     ],
                   ),
@@ -245,54 +234,30 @@ class RecipientsScreenState extends State<RecipientsScreen>{
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Expanded(
-                            child: ButtonTheme(
-                              height:50,
-                              child:  RaisedButton(
-                                color: Colors.amber[900],
-                                child: Text(
-                                  "Previous",
-                                  style: TextStyle(
-                                      color: Colors.white
-                                  ),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                        color: Colors.amber[900],
-                                        width: 1,
-                                        style: BorderStyle.solid),
-                                    borderRadius: BorderRadius.circular(5)),
-                                onPressed: (){
-                                  vm.navigateToSecondPage();
-                                },
-                              ),
+                            child: CustomButton(
+                              height: 50,
+                              title:   "Previous",
+                              onPressed: (){
+                                vm.navigateToSecondPage();
+                              },
                             )
+                            
+                            
 
                         ),
                         SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                            child: ButtonTheme(
+                            child: CustomButton(
                               height: 50,
-                              child:  RaisedButton(
-                                color: Colors.amber[900],
-                                child: Text(
-                                  "Proceed",
-                                  style: TextStyle(
-                                      color: Colors.white
-                                  ),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                        color: Colors.amber[900],
-                                        width: 1,
-                                        style: BorderStyle.solid),
-                                    borderRadius: BorderRadius.circular(5)),
-                                onPressed: (){
-                                  vm.checkRecipientData();
-                                },
-                              ),
+                              onPressed: (){
+                                 vm.checkRecipientData();
+                              },
+                              title: "Proceed",
                             )
+                            
+                            
                         )
                       ],
                     ),

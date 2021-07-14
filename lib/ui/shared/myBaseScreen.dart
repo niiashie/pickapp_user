@@ -6,7 +6,7 @@ import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/routes.dart';
 import 'package:pickappuser/services/dialog.service.dart';
 import 'package:pickappuser/services/router.service.dart';
-import 'package:pickappuser/ui/shared/dialogs/log_out.dialog.dart';
+
 import 'package:pickappuser/ui/shared/nav_drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,7 +43,7 @@ class _BaseScreenState extends State<BaseScreen> {
         color: Colors.white
       ),
     );
-    // TODO: implement build
+    
     return WillPopScope(
         onWillPop: (){
           // Show em dialog and if yes, allow em to quit app

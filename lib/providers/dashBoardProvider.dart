@@ -19,8 +19,8 @@ class DashBoardProvider extends ChangeNotifier{
   bool showRiderCard;
   List<Order2>orders = [];
   String riderImage="",riderName="",riderPhone="",riderVehicleMake="",riderVehicleRegistration="";
-  List<String>orderStatusList = new List();
-  List<OrderStatus>orderStatusList2 = new List();
+  List<String>orderStatusList = [];
+  List<OrderStatus>orderStatusList2 = [];
 
   void initializeProvider(Order2 order2){
     this.selectedOrder = order2;

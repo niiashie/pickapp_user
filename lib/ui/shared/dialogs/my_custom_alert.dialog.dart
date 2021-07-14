@@ -1,8 +1,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pickappuser/constants/images.dart';
 import 'package:pickappuser/services/dialog.service.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 
 
 class MyCustomAlertDialog extends StatelessWidget{
@@ -28,7 +28,7 @@ class MyCustomAlertDialog extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    
     return Container(
       width: 300,
       height: 300,
@@ -73,22 +73,12 @@ class MyCustomAlertDialog extends StatelessWidget{
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Expanded(
-                        child: ButtonTheme(
+                        child: CustomButton(
                           height: 40,
-                          child: RaisedButton(
-                            color: Colors.amber[900],
-                            onPressed: this.onOkayBtnTap,
-                            child: Text(
-                              this.okayText,
-                              style: TextStyle(
-                                  color: Colors.white
-                              ),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                        ),
+                          title: this.okayText,
+                          onPressed: this.onOkayBtnTap,
+                        )
+                        
                       )
                     ],
                   ):
@@ -96,41 +86,22 @@ class MyCustomAlertDialog extends StatelessWidget{
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Expanded(
-                        child: ButtonTheme(
+                        child: CustomButton(
+                          title:  this.okayText,
                           height: 40,
-                          child: RaisedButton(
-                            color: Colors.amber[900],
-                            onPressed: this.onOkayBtnTap,
-                            child: Text(
-                              this.okayText,
-                              style: TextStyle(
-                                  color: Colors.white
-                              ),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                        ),
+                          onPressed: this.onOkayBtnTap
+                        )
+                        
                       ),
                       SizedBox(width: 10,),
                       Expanded(
-                        child: ButtonTheme(
+                        child: CustomButton(
                           height: 40,
-                          child: RaisedButton(
-                            color: Colors.amber[900],
-                            onPressed: this.onCancelBtnTap,
-                            child: Text(
-                              this.cancelText,
-                              style: TextStyle(
-                                  color: Colors.white
-                              ),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                        ),
+                          title: this.cancelText,
+                          onPressed: this.onCancelBtnTap,
+                        )
+                        
+                       
                       )
                     ],
                   )

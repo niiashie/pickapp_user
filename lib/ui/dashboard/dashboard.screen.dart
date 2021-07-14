@@ -6,16 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/app_constants.dart';
 import 'package:pickappuser/constants/images.dart';
-import 'package:pickappuser/constants/routes.dart';
-import 'package:pickappuser/models/drawer_item.dart';
 import 'package:pickappuser/models/order_item2.dart';
 import 'package:pickappuser/models/order_recipient.dart';
-import 'package:pickappuser/providers/drawer.provider.dart';
 import 'package:pickappuser/providers/newOrder.provider.dart';
-import 'package:pickappuser/services/data.service.dart';
 import 'package:pickappuser/services/http.service.dart';
 import 'package:pickappuser/services/local.notification.service.dart';
 import 'package:pickappuser/services/router.service.dart';
+import 'package:pickappuser/ui/createOrder2/createOrder.screen.dart';
 import 'package:pickappuser/ui/orderDetail2/orderDetail2.screen.dart';
 import 'package:pickappuser/ui/shared/myBaseScreen.dart';
 import 'package:provider/provider.dart';
@@ -35,16 +32,14 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
   List<Order2>myOrders = [];
   @override
   void initState() {
-    // TODO: implement initState
+   
     super.initState();
-    var vm = context.read<DrawerStateInfo>();
     checkForOrders();
   }
 
   void checkForOrders()async{
 
-   // List<String>notifications = await DataService().getStringList("notificationDates");
-   // print("The size of notifications is:${notifications.length}");
+ 
 
     var response = await requests.getOrders();
     int statusCode = response.statusCode;
@@ -168,7 +163,9 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
   }
 
   String restructureDate(String date){
+    // ignore: non_constant_identifier_names
     String date_year  = date.substring(0,4);
+    // ignore: non_constant_identifier_names
     String date_month;
     if(date.substring(5,7).contains("01")){
       date_month = "Jan";
@@ -195,6 +192,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
     }else{
       date_month = "Dec";
     }
+    // ignore: non_constant_identifier_names
     String date_day = date.substring(8,10);
     return date_day+" "+date_month+" "+date_year;
   }
@@ -221,7 +219,9 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
   Widget build(BuildContext context) {
 
     final vm2 = Provider.of<NewOrderProvider>(context);
+    // ignore: non_constant_identifier_names
     double device_width = MediaQuery.of(context).size.width;
+    // ignore: non_constant_identifier_names
     double device_height = MediaQuery.of(context).size.height;
 
 
@@ -321,8 +321,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
 
     }
 
-    //vm.getUserOrders();
-    // TODO: implement build
+  
     return BaseScreen(
       title: "Orders",
       body: Stack(
@@ -400,7 +399,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>{
         //  localNotification.showPlainNotification("Name","Emmanuel Ashie");
          // Utils.getProgressBar(context,"Loading,Please wait","showProgress");
           vm2.initializeVariables();
-          router.navigateTo(AppRoutes.newOrderScreenRoute);
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> CreateOrderScreen()));
           print("Floating action button clicked");
         },
         backgroundColor: Colors.amber[900],

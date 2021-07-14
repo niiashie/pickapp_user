@@ -18,9 +18,12 @@ class _LoginScreenstate extends State<LoginScreen>{
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<LoginProvider>(context);
+    // ignore: non_constant_identifier_names
     double device_width = MediaQuery.of(context).size.width;
+
+    // ignore: non_constant_identifier_names
     double device_height = MediaQuery.of(context).size.height;
-    // TODO: implement build
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -103,28 +106,25 @@ class _LoginScreenstate extends State<LoginScreen>{
                ),
                Container(
                  margin: EdgeInsets.only(top:20),
-                 child: ButtonTheme(
-                   minWidth: 300,
-                   height: 50,
-                   child: RaisedButton(
-                     color: Colors.amber[900],
+                 child: ConstrainedBox(
+                   constraints: BoxConstraints.tightFor(height: 50,width: 300),
+                   child: ElevatedButton(
+                     style: ElevatedButton.styleFrom(
+                       primary: Colors.amber[900],
+                     ),
+                     onPressed: (){
+                       vm.login(context);
+                     },
                      child: Text(
                        "Login",
                        style: TextStyle(
                            color: Colors.white
                        ),
                      ),
-                     shape: RoundedRectangleBorder(
-                         side: BorderSide(
-                             color: Colors.amber[900],
-                             width: 1,
-                             style: BorderStyle.solid),
-                         borderRadius: BorderRadius.circular(5)),
-                     onPressed: (){
-                       vm.login(context);
-                     },
+
                    ),
-                 ),
+                 )
+
                ),
                Container(
                  width: 300,
@@ -134,7 +134,7 @@ class _LoginScreenstate extends State<LoginScreen>{
                    crossAxisAlignment: CrossAxisAlignment.center,
                    children: <Widget>[
                      Text(
-                       "Dont have an account?",
+                       "Don't have an account?",
                        style: TextStyle(
                            color:Colors.grey
                        ),

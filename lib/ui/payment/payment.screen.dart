@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/images.dart';
-import 'package:pickappuser/providers/newOrder.provider.dart';
+import 'package:pickappuser/providers/createOrderProvider.dart';
 import 'package:pickappuser/services/local.notification.service.dart';
 import 'package:provider/provider.dart';
 
@@ -14,16 +14,19 @@ class PaymentScreen extends StatefulWidget{
 
 class _PaymentScreenState extends State<PaymentScreen>{
   var localNotification = locator<LocalNotificationService>();
+
+  CreateOrderProvider vm1;
+
   @override
   initState(){
     super.initState();
+    vm1 = context.read<CreateOrderProvider>();
     localNotification.initializing();
   }
 
   @override
   Widget build(BuildContext context) {
-    final vm = Provider.of<NewOrderProvider>(context);
-    // TODO: implement build
+   
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -78,7 +81,7 @@ class _PaymentScreenState extends State<PaymentScreen>{
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: Text(
-                            vm.serviceCharge,
+                            vm1.serviceCharge,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 18,
@@ -121,7 +124,7 @@ class _PaymentScreenState extends State<PaymentScreen>{
                               ),
                             ),
                             onTap: (){
-                              vm.paymentDialog(context,"MTN");
+                              vm1.paymentDialog(context,"MTN");
                             },
                           )
                       ),
@@ -147,7 +150,7 @@ class _PaymentScreenState extends State<PaymentScreen>{
                             ),
                           ),
                           onTap: (){
-                            vm.paymentDialog(context,"TIGO");
+                            vm1.paymentDialog(context,"TIGO");
                           },
                         ),
                       )
@@ -182,7 +185,7 @@ class _PaymentScreenState extends State<PaymentScreen>{
                             ),
                           ),
                           onTap: (){
-                            vm.paymentDialog(context,"VODAFONE");
+                            vm1.paymentDialog(context,"VODAFONE");
                           },
                         ),
                       ),
@@ -208,7 +211,7 @@ class _PaymentScreenState extends State<PaymentScreen>{
                             ),
                           ),
                           onTap: (){
-                            vm.paymentDialog(context,"AIRTEL");
+                            vm1.paymentDialog(context,"AIRTEL");
                           },
                         ),
                       )
@@ -242,7 +245,7 @@ class _PaymentScreenState extends State<PaymentScreen>{
                             ),
                           ),
                           onTap: (){
-                            vm.paymentDialog(context,"Master Card");
+                            vm1.paymentDialog(context,"Master Card");
                           },
                         ),
                       ),
@@ -268,7 +271,7 @@ class _PaymentScreenState extends State<PaymentScreen>{
                             ),
                           ),
                           onTap: (){
-                            vm.paymentDialog(context,"VISA");
+                            vm1.paymentDialog(context,"VISA");
                           },
                         ),
                       )

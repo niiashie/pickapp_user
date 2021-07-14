@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:pickappuser/models/carrier_item.dart';
-import 'package:pickappuser/models/order_recipient.dart';
 import 'package:pickappuser/models/package_item.dart';
 
 class Order{

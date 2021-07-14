@@ -5,15 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:pickappuser/constants/routes.dart';
 import 'package:pickappuser/ui/changePassword/changePasswordScreen.dart';
 import 'package:pickappuser/ui/createOrder/newOrder.screen.dart';
+import 'package:pickappuser/ui/createOrder2/createOrder.screen.dart';
 import 'package:pickappuser/ui/dashboard/dashboard.screen.dart';
 import 'package:pickappuser/ui/editProfile/editProfileScreen.dart';
 import 'package:pickappuser/ui/emailVerification/emailVerification.screen.dart';
-import 'package:pickappuser/ui/fcm/fcmTest.dart';
 import 'package:pickappuser/ui/loclaNoti/localNotification.dart';
 import 'package:pickappuser/ui/login/login.screen.dart';
 import 'package:pickappuser/ui/notifications/notificationScreen.dart';
 import 'package:pickappuser/ui/orderDetail/orderDetail.screen.dart';
-import 'package:pickappuser/ui/orderDetail2/orderDetail2.screen.dart';
 import 'package:pickappuser/ui/orderSummary/orderSummary.screen.dart';
 import 'package:pickappuser/ui/payment/payment.screen.dart';
 import 'package:pickappuser/ui/placesSearch/searchPlacesScreen.dart';
@@ -58,6 +57,8 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return MaterialPageRoute(builder: (context) => EditProfileScreen());
     case AppRoutes.changePasswordRoute:
       return MaterialPageRoute(builder: (context) => ChangePasswordScreen());
+    case AppRoutes.createOrderRoute:
+      return MaterialPageRoute(builder: (context)=> CreateOrderScreen());
     default:
       return MaterialPageRoute(builder: (context) => StartScreen());
   }

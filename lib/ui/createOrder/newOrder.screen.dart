@@ -9,6 +9,7 @@ import 'package:pickappuser/services/router.service.dart';
 import 'package:pickappuser/ui/createOrder/widget/carrierDetails.screen.dart';
 import 'package:pickappuser/ui/createOrder/widget/recipientDetails.screen.dart';
 import 'package:pickappuser/ui/createOrder/widget/senderDetails.screen.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:pickappuser/ui/shared/myPageIndicator.dart';
 import 'package:pickappuser/ui/shared/myTextInput.dart';
 import 'package:provider/provider.dart';
@@ -21,10 +22,11 @@ class NewOrderScreen extends StatefulWidget{
 class _NewOrderScreenState  extends State<NewOrderScreen> with TickerProviderStateMixin{
 
   NewOrderProvider vm1;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
-    // TODO: implement initState
+
     vm1 = context.read<NewOrderProvider>();
     vm1.tabController = TabController(
       vsync: this,
@@ -35,366 +37,16 @@ class _NewOrderScreenState  extends State<NewOrderScreen> with TickerProviderSta
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<NewOrderProvider>(context);
+     // ignore: non_constant_identifier_names
      double device_width = MediaQuery.of(context).size.width;
+     // ignore: non_constant_identifier_names
      double device_height = MediaQuery.of(context).size.height;
 
 
 
-    final firstPageIndicator = PageIndicator();
-    final secondPageIndicator = PageIndicator(firstIndicator:true);
     final thirdPageIndicator = PageIndicator(firstIndicator:true,secondIndicator: true,);
 
-    final firstScreen = SingleChildScrollView(
-      child: Visibility(
-        visible: vm.firstPageVisible,
-        child:  Container(
-            width: device_width,
-            margin: EdgeInsets.only(left:20,right:20),
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 20,),
-                firstPageIndicator,
-                SizedBox(
-                  height: 15,
-                ),
-                Card(
-                  elevation: 3,
-                  color: Colors.white,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        height: 70,
-                        child: Stack(
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Divider(color: Colors.grey,),
-                            ),
-                            Align(
-                                alignment: Alignment.centerLeft,
-                                child: Container(
-                                  margin: EdgeInsets.only(left:20),
-                                  child: Text(
-                                    "Carrier Details",style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.w700),
-                                  ),
-                                )
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 60,
-                        margin: EdgeInsets.only(left:10,right: 10,top: 15),
-                        child: MyTextInputField(
-                          label: "Carrier Type",
-                           readOnly: true,
-                          controller: vm.carrierTypeCtrl,
-                          error: vm.carrierTypeError,
-                          errorText: AppConstants.carrierTypeError,
-                          onTap: (){
-                            vm.getCarrierTypes(context);
-                          },
-                        ),
-                      ),
-                      Container(
-                        height: 60,
-                        margin: EdgeInsets.only(left:10,right: 10,top: 10),
-                        child: MyTextInputField(
-                          label: "Package Size",
-                          readOnly: true,
-                          error:vm.packageSizeError,
-                          errorText: AppConstants.packageSizeError,
-                          controller: vm.packageSizeCtrl,
-                          onTap: (){
-                            vm.getPackageSizes(context);
-                          },
-                        ),
-                      ),
-                      Container(
-                        height: 60,
-                        margin: EdgeInsets.only(left:10,right: 10,top: 10),
-                        child: MyTextInputField(
-                          label: "Package Quantity",
-                          textEntryType: TextInputType.number,
-                          error:vm.packQuantityError,
-                          errorText: AppConstants.packageQuantityError,
-                          controller: vm.packageQuantityCtrl,
-                        ),
-                      ),
-                      Container(
-                        height: 40,
-                        margin: EdgeInsets.only(left:10,right: 10),
-                        child: Stack(
-                          children: <Widget>[
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("The product is fragile",style: TextStyle(color: Colors.grey,fontSize: 15),),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child:Checkbox(
-                                value: vm.packageFragile,
-                                activeColor: Colors.amber[900],
-                                onChanged: (bool newValue){
-                                  vm.packageFragileOnClick();
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-
-                        margin: EdgeInsets.only(left:10,right: 10,top: 10),
-                        child: MyTextInputField(
-                          label: "Item Description",
-                          maxlines: 3,
-                          errorText: AppConstants.itemDescriptionError,
-                          error: vm.itemDescriptionError,
-                          controller: vm.itemDescriptionCtrl,
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(left:10,right: 10,top: 10),
-                        child: ButtonTheme(
-                          height: 50,
-                          minWidth: 300,
-                          child:  RaisedButton(
-                            color: Colors.amber[900],
-                            child: Text(
-                              "Next",
-                              style: TextStyle(
-                                  color: Colors.white
-                              ),
-                            ),
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    color: Colors.amber[900],
-                                    width: 1,
-                                    style: BorderStyle.solid),
-                                borderRadius: BorderRadius.circular(5)),
-                            onPressed: (){
-                              vm.navigateToSecondPage();
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20,)
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20,)
-              ],
-            )
-        ),
-      ),
-    );
-
-
-
-    final secondScreen = SingleChildScrollView(
-      child: Visibility(
-        visible: vm.secondPageVisible,
-        child: Container(
-          width: device_width,
-          margin: EdgeInsets.only(left:20,right:20),
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 20,),
-              secondPageIndicator,
-              SizedBox(
-                height: 15,
-              ),
-              Card(
-                elevation: 3,
-                color: Colors.white,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      height: 70,
-                      child: Stack(
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Divider(color: Colors.grey,),
-                          ),
-                          Align(
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                margin: EdgeInsets.only(left:20),
-                                child: Text(
-                                  "Sender Details",style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.w700),
-                                ),
-                              )
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left:20,top: 15),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Contact Information"),
-                      ),
-                    ),
-                    Container(
-                      height: 40,
-                      margin: EdgeInsets.only(left:20,right: 10,top:10),
-                      child: Stack(
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text("I am the sender",
-                              style: TextStyle(
-                                  color: Colors.grey
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Checkbox(
-                              value: vm.iAmTheSender,
-                              activeColor: Colors.amber[900],
-                              onChanged: (bool newValue){
-                                vm.iAmTheSenderOnClick();
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-
-                      margin: EdgeInsets.only(left:10,right: 10,top: 10),
-                      child: MyTextInputField(
-                        label: "Full Name",
-                        controller: vm.senderFullNameCtrl,
-                        error: vm.senderFullNameError,
-                        errorText: AppConstants.fullNameError,
-                      ),
-                    ),
-                    Container(
-
-                      margin: EdgeInsets.only(left:10,right: 10,top: 10),
-                      child: MyTextInputField(
-                        label: "Phone",
-                        textEntryType: TextInputType.phone,
-                        controller: vm.senderPhoneCtrl,
-                        errorText: AppConstants.phoneError,
-                        error: vm.senderPhoneNumberError,
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left:20,top: 10),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("PickUp Information"),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left:10,right: 10,top: 10),
-                      child: MyTextInputField(
-                        label: "Pickup Location",
-                        textEntryType: TextInputType.text,
-                        readOnly: true,
-                        controller: vm.pickUpLocationDesCtrl,
-                        error: vm.pickUpLocationError,
-                        errorText: AppConstants.pickUpLocationError,
-                        trailingIcon: true,
-                        onTap: (){
-                          vm.searchPlaces(context);
-                        },
-                        trailIcon: Icons.location_on,
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left:10,right: 10,top: 10),
-                      child: MyTextInputField(
-                        label: "Instruction",
-                        controller: vm.pickUpInstructionCtrl,
-                        maxlines: 5,
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left:10,right: 10,top: 10),
-                      height: 50,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                              child: ButtonTheme(
-                                height:50,
-                                child:  RaisedButton(
-                                  color: Colors.amber[900],
-                                  child: Text(
-                                    "Previous",
-                                    style: TextStyle(
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          color: Colors.amber[900],
-                                          width: 1,
-                                          style: BorderStyle.solid),
-                                      borderRadius: BorderRadius.circular(5)),
-                                  onPressed: (){
-                                    vm.navigateToFirstPage();
-                                  },
-                                ),
-                              )
-
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                              child: ButtonTheme(
-                                height: 50,
-                                child:  RaisedButton(
-                                  color: Colors.amber[900],
-                                  child: Text(
-                                    "Next",
-                                    style: TextStyle(
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          color: Colors.amber[900],
-                                          width: 1,
-                                          style: BorderStyle.solid),
-                                      borderRadius: BorderRadius.circular(5)),
-                                  onPressed: (){
-                                    vm.navigateToThirdPage();
-                                  },
-                                ),
-                              )
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20,)
-                  ],
-                ),
-              ),
-              SizedBox(height: 20,)
-            ],
-          ),
-        ),
-      ),
-    );
-
-    final tabBarView = TabBarView(
-        physics: NeverScrollableScrollPhysics(),
-        controller: vm1.tabController,
-        children: [
-          CarrierDetailsScreen(),
-          SenderDetailsScreen(),
-          RecipientsScreen()
-        ],
-    );
+    
 
 
 
@@ -552,6 +204,7 @@ class _NewOrderScreenState  extends State<NewOrderScreen> with TickerProviderSta
       );
     }
 
+    // ignore: unused_local_variable
     final thirdScreen = Visibility(
       visible: vm.thirdPageVisible,
       child: ListView.builder(itemBuilder:(context,index){
@@ -594,27 +247,15 @@ class _NewOrderScreenState  extends State<NewOrderScreen> with TickerProviderSta
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
                         Expanded(
-                          child: ButtonTheme(
-                            height: 50,
-                            child:RaisedButton(
-                              color: Colors.amber[900],
-                              child: Text(
-                                "ADD NEW RECIPIENT",
-                                style: TextStyle(
-                                    color: Colors.white
-                                ),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                      color: Colors.amber[900],
-                                      width: 1,
-                                      style: BorderStyle.solid),
-                                  borderRadius: BorderRadius.circular(5)),
+                          child: CustomButton(
+                              height: 50,
+                              title: "ADD NEW RECIPIENT",
                               onPressed: (){
                                 vm.addToRecipientCard();
                               },
-                            ),
-                          ),
+                            )
+                          
+                          
                         )
                       ],
                     ),
@@ -625,54 +266,30 @@ class _NewOrderScreenState  extends State<NewOrderScreen> with TickerProviderSta
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Expanded(
-                              child: ButtonTheme(
-                                height:50,
-                                child:  RaisedButton(
-                                  color: Colors.amber[900],
-                                  child: Text(
-                                    "Previous",
-                                    style: TextStyle(
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          color: Colors.amber[900],
-                                          width: 1,
-                                          style: BorderStyle.solid),
-                                      borderRadius: BorderRadius.circular(5)),
-                                  onPressed: (){
-                                    vm.navigateToSecondPage();
-                                  },
-                                ),
+                              child: CustomButton(
+                                title: "Previous",
+                                height: 50,
+                                onPressed: (){
+                                   vm.navigateToSecondPage();
+                                },
                               )
+                              
+                              
 
                           ),
                           SizedBox(
                             width: 10,
                           ),
                           Expanded(
-                              child: ButtonTheme(
-                                height: 50,
-                                child:  RaisedButton(
-                                  color: Colors.amber[900],
-                                  child: Text(
-                                    "Proceed",
-                                    style: TextStyle(
-                                        color: Colors.white
-                                    ),
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      side: BorderSide(
-                                          color: Colors.amber[900],
-                                          width: 1,
-                                          style: BorderStyle.solid),
-                                      borderRadius: BorderRadius.circular(5)),
-                                  onPressed: (){
+                              child: CustomButton(
+                                  onPressed:(){
                                     vm.checkRecipientData();
                                   },
-                                ),
-                              )
+                                  height: 50,
+                                  title:  "Proceed",
+                                )
+                              
+                              
                           )
                         ],
                       ),
@@ -692,13 +309,14 @@ class _NewOrderScreenState  extends State<NewOrderScreen> with TickerProviderSta
 
 
 
-    // TODO: implement build
+   
     return WillPopScope(
       onWillPop:(){
         vm.reset(context);
         return Future.delayed(Duration(microseconds: 1), () => false);
         },
       child: Scaffold(
+        key: scaffoldKey,
         appBar: AppBar(
           title: Text(
             "New Order",
@@ -715,7 +333,15 @@ class _NewOrderScreenState  extends State<NewOrderScreen> with TickerProviderSta
           height: device_height,
           width: device_width,
           color: Colors.white,
-          child: tabBarView
+          child: TabBarView(
+            physics: NeverScrollableScrollPhysics(),
+            controller: vm1.tabController,
+            children: [
+              CarrierDetailsScreen(carrierTypeContext: scaffoldKey.currentContext,),
+              SenderDetailsScreen(),
+              RecipientsScreen()
+            ],
+          )
           /*Stack(
             children: <Widget>[
               firstScreen,

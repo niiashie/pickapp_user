@@ -1,4 +1,5 @@
 import 'package:pickappuser/constants/app_constants.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:pickappuser/ui/shared/myPageIndicator.dart';
 import 'package:flutter/material.dart';
 import 'package:pickappuser/providers/newOrder.provider.dart';
@@ -15,7 +16,7 @@ class SenderDetailsScreenState extends State<SenderDetailsScreen>{
   Widget build(BuildContext context) {
     final vm = Provider.of<NewOrderProvider>(context);
     double deviceWidth = MediaQuery.of(context).size.width;
-    double deviceHeight = MediaQuery.of(context).size.height;
+    
     final secondPageIndicator = PageIndicator(firstIndicator:true);
     return SingleChildScrollView(
       child: Container(
@@ -146,54 +147,29 @@ class SenderDetailsScreenState extends State<SenderDetailsScreen>{
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Expanded(
-                            child: ButtonTheme(
-                              height:50,
-                              child:  RaisedButton(
-                                color: Colors.amber[900],
-                                child: Text(
-                                  "Previous",
-                                  style: TextStyle(
-                                      color: Colors.white
-                                  ),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                        color: Colors.amber[900],
-                                        width: 1,
-                                        style: BorderStyle.solid),
-                                    borderRadius: BorderRadius.circular(5)),
-                                onPressed: (){
-                                  vm.navigateToFirstPage();
-                                },
-                              ),
-                            )
-
+                            child: CustomButton(
+                               title: "Previous",
+                               onPressed: (){
+                                 vm.navigateToFirstPage();
+                               },
+                               height: 50,
+                              )
+                            
+                           
                         ),
                         SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                            child: ButtonTheme(
+                            child: CustomButton(
                               height: 50,
-                              child:  RaisedButton(
-                                color: Colors.amber[900],
-                                child: Text(
-                                  "Next",
-                                  style: TextStyle(
-                                      color: Colors.white
-                                  ),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                    side: BorderSide(
-                                        color: Colors.amber[900],
-                                        width: 1,
-                                        style: BorderStyle.solid),
-                                    borderRadius: BorderRadius.circular(5)),
-                                onPressed: (){
-                                  vm.navigateToThirdPage();
-                                },
-                              ),
+                              title: "Next",
+                              onPressed: (){
+                                 vm.navigateToThirdPage();
+                              },
                             )
+                            
+                            
                         )
                       ],
                     ),

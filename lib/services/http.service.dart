@@ -3,9 +3,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:http/http.dart' as http;
-import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/local_storage_name.dart';
-import 'package:pickappuser/models/recipient_item.dart';
+import 'package:pickappuser/models/recipient_information_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -71,9 +70,9 @@ class HttpService {
 
   Future<http.Response> post(String url, Map<String, String> body) async {
     String uri = "$host$url";
+    // ignore: unused_local_variable
     final httpBody = jsonEncode(body);
       return http.post(uri, body: body);
-
 
   }
 
@@ -123,15 +122,16 @@ class HttpService {
     );
   }
 
+  // ignore: non_constant_identifier_names
   Future<http.Response>saveOrder(String CarrierId,
       String packageId,String quantity,String isSender,String description,String isFragile,
-      String cost,String senderName,String senderPhone,String locAddress,String pLat,String pLong,
-      List<RecipientData>recipients
+      String cost,String senderName,String senderPhone,String locAddress,String pLat,String pLong,String pickUpAt,
+      List<RecipientInformationModel>recipients
       )async{
     SharedPreferences preferences =await SharedPreferences.getInstance();
     String token = preferences.getString(LocalStorageName.bearerToken);
-    DateTime now = new DateTime.now();
-    DateTime date = new DateTime(now.year, now.month, now.day);
+    
+    //DateTime date = new DateTime(now.year, now.month, now.day);
 
     var map = new Map<String, String>();
     map['carrier_type_id'] = CarrierId;
@@ -146,19 +146,19 @@ class HttpService {
     map['pickup_location_address'] = locAddress;
     map['pickup_location_latitude'] = pLat;
     map['pickup_location_longitude'] = pLong;
-   // map['pickup_at'] = date.toString();
+    map['pickup_at'] = pickUpAt;
     map['is_within_city'] = "1";
 
    for(int y=0;y<recipients.length;y++){
       var rng = new Random();
       String random = rng.nextInt(100).toString();
-      map["recipients[$y][name]"] = recipients[y].fullnameController.text;
-      map["recipients[$y][phone]"] = recipients[y].phoneController.text;
-      map["recipients[$y][latitude]"] = recipients[y].locationLatitude;
-      map["recipients[$y][longitude]"] = recipients[y].locationLongitude;
+      map["recipients[$y][name]"] = recipients[y].recipientName;
+      map["recipients[$y][phone]"] = recipients[y].recipientPhone;
+      map["recipients[$y][latitude]"] = recipients[y].recipientDeliveryLatitude;
+      map["recipients[$y][longitude]"] = recipients[y].recipientDeliveryLongitude;
       map["recipients[$y][confirmation_code]"] = random;
-      map["recipients[$y][delivery_instruction]"] = recipients[y].deliveryInstructionController.text.isNotEmpty? recipients[y].deliveryInstructionController.text : "" ;
-      map["recipients[$y][address]"] = recipients[y].deliveryLocationTextController.text;
+      map["recipients[$y][delivery_instruction]"] = recipients[y].recipientDeliveryInstruction.isNotEmpty? recipients[y].recipientDeliveryInstruction : "" ;
+      map["recipients[$y][address]"] = recipients[y].recipientDeliveryLocation;
     }
     String uri = "$host/orders";
     return http.post(uri,

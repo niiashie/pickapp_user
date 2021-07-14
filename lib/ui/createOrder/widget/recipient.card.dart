@@ -29,10 +29,11 @@ class RecipientCard extends StatefulWidget{
 class _RecipientCardState extends State<RecipientCard>{
   @override
   Widget build(BuildContext context) {
+    // ignore: non_constant_identifier_names
     double device_width = MediaQuery.of(context).size.width;
     bool cardExpanded = true;
     bool iAmTheRecipientValue = false;
-    // TODO: implement build
+    
     return Container(
        width: device_width,
       margin: EdgeInsets.only(left:20,right:20),

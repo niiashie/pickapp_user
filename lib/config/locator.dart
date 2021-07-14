@@ -15,5 +15,5 @@ void setupLocator(){
   locator.registerSingleton<HttpService>(HttpService());
   locator.registerSingleton<AuthService>(AuthService());
   locator.registerSingleton<LocalNotificationService>(LocalNotificationService());
-  //locator.registerSingleton<DataService>(DataService());
+  locator.registerSingleton<DataService>(DataService());
 }

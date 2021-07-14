@@ -13,6 +13,7 @@ class PageIndicator extends StatelessWidget{
     this.thirdIndicator = false}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    // ignore: non_constant_identifier_names
     double device_width = MediaQuery.of(context).size.width;
 
     final middleLine = Container(
@@ -29,7 +30,7 @@ class PageIndicator extends StatelessWidget{
     final checked = Image.asset(AppImages.checked, width: 20,height: 20);
 
     final unchecked = Image.asset(AppImages.unchecked,width: 20,height: 20);
-    // TODO: implement build
+   
     return Container(
        width: device_width,
       height: 60,

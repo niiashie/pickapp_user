@@ -126,8 +126,8 @@ class LoginProvider with ChangeNotifier{
 
   void saveUserData(String token,String id,String name,String phone,String mail,String avatar,String tokenExpiry) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    List<String>notificationDates = new List<String>();
-    List<String>notificationBody = new List<String>();
+    List<String>notificationDates = [];
+    List<String>notificationBody = [];
     preferences.setStringList("notificationDates", notificationDates);
     preferences.setStringList("notificationBody", notificationBody);
     preferences.setString(LocalStorageName.bearerToken, token);

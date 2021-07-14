@@ -12,12 +12,6 @@ ThemeData primaryTheme = ThemeData(
   appBarTheme: AppBarTheme(
     color: Colors.white,
     iconTheme: IconThemeData(color: Colors.black54, size: 20.0),
-    textTheme: TextTheme(
-      title: TextStyle(
-        color: Colors.black,
-        fontSize: 18.0,
-        fontWeight: FontWeight.w600
-      ),
-    ),
+    
   ),
 );

@@ -5,12 +5,13 @@ import 'package:pickappuser/config/locator.dart';
 import 'package:pickappuser/constants/images.dart';
 import 'package:pickappuser/constants/routes.dart';
 import 'package:pickappuser/services/router.service.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class LogOutDialog extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     var router = locator<RouterService>();
-    // TODO: implement build
+   
     return Container(
       height: 300,
       child: Stack(
@@ -62,7 +63,7 @@ class LogOutDialog extends StatelessWidget{
                                  child: ButtonTheme(
                                    minWidth: 100,
                                    height: 40,
-                                   child: FlatButton(
+                                   child: TextButton(
                                      child: Text(
                                        "Cancel",
                                        style: TextStyle(
@@ -79,30 +80,19 @@ class LogOutDialog extends StatelessWidget{
                              SizedBox(width: 10,),
                              Expanded(
                                child: Center(
-                                 child: ButtonTheme(
-                                   minWidth: 100,
+                                 child: CustomButton(
+                                   setWidth: true,
+                                   width: 100,
                                    height: 40,
-                                   child: RaisedButton(
-                                     color: Colors.amber[900],
-                                     child: Text(
-                                       "Log Out",
-                                       style: TextStyle(
-                                         color: Colors.white
-                                       ),
-                                     ),
-                                     shape: RoundedRectangleBorder(
-                                         side: BorderSide(
-                                             color: Colors.amber[900],
-                                             width: 1,
-                                             style: BorderStyle.solid),
-                                         borderRadius: BorderRadius.circular(5)),
-                                     onPressed: ()async{
-                                       SharedPreferences _prefs = await SharedPreferences.getInstance();
+                                   title: "Log Out",
+                                   onPressed: ()async{
+                                      SharedPreferences _prefs = await SharedPreferences.getInstance();
                                        _prefs.clear();
-                                       router.navigateTo(AppRoutes.loginScreenRoute);
-                                     },
-                                   ),
-                                 ),
+                                       router.navigateToAndReplace(AppRoutes.loginScreenRoute);
+                                   },
+                                 )
+                                 
+                                 
                                ),
                              )
                             ],

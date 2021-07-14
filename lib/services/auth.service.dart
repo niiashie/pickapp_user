@@ -1,11 +1,4 @@
 
-import 'package:pickappuser/config/locator.dart';
-import 'package:pickappuser/constants/local_storage_name.dart';
-
-import 'data.service.dart';
-
-
-
 class AuthService{
 
   /*final localStorage = locator<DataService>();

@@ -18,7 +18,7 @@ class _SettingsState extends State<SettingsScreen>{
   var vm;
   @override
   void initState() {
-    // TODO: implement initState
+    
     vm = context.read<DrawerStateInfo>();
     super.initState();
   }
@@ -30,6 +30,7 @@ class _SettingsState extends State<SettingsScreen>{
       index: 0,
     );
     router.navigateTo(AppRoutes.dashboardRoute);
+    // ignore: await_only_futures
     return await true;
   }
 
@@ -112,8 +113,9 @@ class _SettingsState extends State<SettingsScreen>{
         ),
       ),
     );
-    // TODO: implement build
+    
     return WillPopScope(
+      // ignore: missing_return
       onWillPop: (){
         backPressed();
       },

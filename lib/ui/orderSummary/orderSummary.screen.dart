@@ -1,12 +1,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pickappuser/config/locator.dart';
-import 'package:pickappuser/models/recipient_item.dart';
-import 'package:pickappuser/providers/newOrder.provider.dart';
-import 'package:pickappuser/services/router.service.dart';
+import 'package:pickappuser/models/recipient_information_model.dart';
+import 'package:pickappuser/providers/createOrderProvider.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:provider/provider.dart';
-import 'package:pickappuser/constants/routes.dart';
 
 class OrderSummaryScreen extends StatefulWidget{
   @override
@@ -14,16 +12,46 @@ class OrderSummaryScreen extends StatefulWidget{
 }
 
 class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
+
+  CreateOrderProvider vm2;
+  bool senderDetailsExpanded = true,carrierDetailsExpanded = true;
+  bool senderDetailsClosed = false, carrierDetailsClosed = false;
+  var recipientSizedBoxHeight = 0.00;
+  @override
+  void initState() {
+    super.initState();
+    vm2 = context.read<CreateOrderProvider>();
+    print("Pick up time:${vm2.senderDetails.pickUpTime}");
+    changeRecipientSizedBoxHeight();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var router = locator<RouterService>();
-    final vm = Provider.of<NewOrderProvider>(context);
+    // ignore: non_constant_identifier_names
     double device_width = MediaQuery.of(context).size.width;
+
+    // ignore: non_constant_identifier_names
     double device_height = MediaQuery.of(context).size.height;
 
-    String senderName = vm.senderFullNameCtrl.text;
+    /*String senderName = vm.senderFullNameCtrl.text;
     String senderPhone = vm.senderPhoneCtrl.text;
-    String userDetail = "$senderName($senderPhone)";
+    String userDetail = "$senderName($senderPhone)";*/
+
+    final itemImage = Visibility(
+      visible: vm2.carrierDetails.selectedItemCaptureImage==null?false:true,
+      child: Container(
+        margin: EdgeInsets.only(top:15,left:20,right: 20),
+        height: 150,
+        child: Row(
+          children: [
+            Expanded(child: Card(
+              elevation: 3,
+              child: Image.file(vm2.carrierDetails.selectedItemCaptureImage,fit: BoxFit.fill,),
+            ),)
+          ],
+        )
+      ),
+    );
 
     final senderDetails =  Container(
       margin: EdgeInsets.only(top:15,left:20,right: 20),
@@ -36,7 +64,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
               child: Stack(
                 children: <Widget>[
                   Visibility(
-                    visible: vm.senderDetailsExpanded?true:false,
+                    visible: senderDetailsExpanded?true:false,
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: Divider(color: Colors.grey,),
@@ -48,20 +76,28 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                       child: Stack(
                         children: <Widget>[
                           Visibility(
-                            visible: vm.senderDetailsExpanded?true:false,
+                            visible: senderDetailsExpanded?true:false,
                             child: IconButton(
                               icon: Icon(Icons.arrow_drop_down),
                               onPressed: (){
-                                vm.orderSummarySenderDetailsExpandableClicked();
+                                setState(() {
+                                  senderDetailsExpanded = !senderDetailsExpanded;
+                                  senderDetailsClosed = !senderDetailsClosed;
+                                });
+                               // vm.orderSummarySenderDetailsExpandableClicked();
                               },
                             ),
                           ),
                           Visibility(
-                            visible: vm.senderDetailsMinimized?true:false,
+                            visible: senderDetailsClosed?true:false,
                             child: IconButton(
                               icon: Icon(Icons.arrow_drop_up),
                               onPressed: (){
-                                vm.orderSummarySenderDetailsExpandableClicked();
+                                setState(() {
+                                  senderDetailsClosed = !senderDetailsClosed;
+                                  senderDetailsExpanded = !senderDetailsExpanded;
+                                });
+                                //vm.orderSummarySenderDetailsExpandableClicked();
                               },
                             ),
                           )
@@ -81,7 +117,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
               ),
             ),
             Visibility(
-              visible: vm.senderDetailsExpanded,
+              visible: senderDetailsExpanded,
               child: Column(
                 children: <Widget>[
                   Container(
@@ -107,7 +143,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                           child: Container(
                             margin: EdgeInsets.only(bottom: 15),
                             child: Text(
-                              userDetail,
+                              "${vm2.senderDetails.senderName} (${vm2.senderDetails.senderPhone})",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w700
@@ -141,7 +177,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                           child: Container(
                             margin: EdgeInsets.only(bottom: 15),
                             child: Text(
-                              vm.pickUpLocationDesCtrl.text,
+                              vm2.senderDetails.pickUpDescription,
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w700
@@ -153,7 +189,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                     ),
                   ),
                   Visibility(
-                    visible: vm.pickUpInstructionCtrl.text.isNotEmpty,
+                    visible: vm2.senderDetails.pickUpInstruction.isNotEmpty,
                     child: Container(
                       height: 60,
                       margin: EdgeInsets.only(left:10,right:10,top: 15),
@@ -177,7 +213,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                             child: Container(
                               margin: EdgeInsets.only(bottom: 15),
                               child: Text(
-                                vm.pickUpInstructionCtrl.text,
+                                vm2.senderDetails.pickUpInstruction,
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w700
@@ -211,7 +247,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
               child: Stack(
                 children: <Widget>[
                   Visibility(
-                    visible: vm.carrierDetailsExpanded?true:false,
+                    visible: carrierDetailsExpanded?true:false,
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: Divider(color: Colors.grey,),
@@ -223,20 +259,28 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                       child: Stack(
                         children: <Widget>[
                           Visibility(
-                            visible: vm.carrierDetailsExpanded?true:false,
+                            visible: carrierDetailsExpanded?true:false,
                             child: IconButton(
                               icon: Icon(Icons.arrow_drop_down,color: Colors.grey,),
                               onPressed: (){
-                                vm.orderSummaryCarrierDetailsExpandableClicked();
+                                //vm.orderSummaryCarrierDetailsExpandableClicked();
+                                setState(() {
+                                  carrierDetailsExpanded = !carrierDetailsExpanded;
+                                  carrierDetailsClosed = !carrierDetailsClosed;
+                                });
                               },
                             ),
                           ),
                           Visibility(
-                            visible: vm.carrierDetailsMinimized?true:false,
+                            visible: carrierDetailsClosed?true:false,
                             child: IconButton(
                               icon: Icon(Icons.arrow_drop_up,color: Colors.grey),
                               onPressed: (){
-                                vm.orderSummaryCarrierDetailsExpandableClicked();
+                                setState(() {
+                                  carrierDetailsExpanded = !carrierDetailsExpanded;
+                                  carrierDetailsClosed = !carrierDetailsClosed;
+                                });
+                                //vm.orderSummaryCarrierDetailsExpandableClicked();
                               },
                             ),
                           )
@@ -256,7 +300,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
               ),
             ),
             Visibility(
-              visible: vm.carrierDetailsExpanded,
+              visible: carrierDetailsExpanded,
               child: Column(
                 children: <Widget>[
                   Container(
@@ -282,7 +326,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                           child: Container(
                             margin: EdgeInsets.only(bottom: 15),
                             child: Text(
-                              vm.selectedCarrierType.carrierName,
+                              vm2.carrierDetails.selectedCarrierType.carrierName,
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w700
@@ -322,7 +366,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                                       child: Container(
                                         margin: EdgeInsets.only(bottom: 15),
                                         child: Text(
-                                          vm.selectedPackageSize.packageSize,
+                                          vm2.carrierDetails.selectedPackageSize.packageSize,
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontWeight: FontWeight.w700
@@ -349,7 +393,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                                       child: Container(
                                         margin: EdgeInsets.only(bottom: 15),
                                         child: Text(
-                                          vm.selectedPackageSize.packageWeight,
+                                          vm2.carrierDetails.selectedPackageSize.packageWeight,
                                           style: TextStyle(
                                               color: Colors.black,
                                               fontWeight: FontWeight.w700
@@ -383,7 +427,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                                 ),
                                 SizedBox(width: 15,),
                                 Text(
-                                  vm.packageQuantityCtrl.text,
+                                  vm2.carrierDetails.itemQuantity,
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700
@@ -413,7 +457,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                                 ),
                                 SizedBox(width: 10,),
                                 Text(
-                                  vm.packageFragileAnswer,
+                                  (vm2.carrierDetails.packageFragile==true)?"Yes":"No",
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700
@@ -444,7 +488,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                           child: Container(
                             margin: EdgeInsets.only(top:10),
                             child: Text(
-                              vm.itemDescriptionCtrl.text,
+                              //vm.itemDescriptionCtrl.text,
+                              vm2.carrierDetails.itemDescription,
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                   color: Colors.black,
@@ -473,9 +518,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
       ),
     );
 
-    Widget recipientDataListItem(RecipientData content,index){
-      String recipientName = content.fullnameController.text;
-      String recipientPhone = content.phoneController.text;
+    Widget recipientDataListItem(RecipientInformationModel content,index){
+      String recipientName = content.recipientName;
+      String recipientPhone = content.recipientPhone;
       String recipientDetails = "$recipientName($recipientPhone)";
       int recipientNumber = index+1;
       return Container(
@@ -489,7 +534,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                 child: Stack(
                   children: <Widget>[
                     Visibility(
-                      visible: content.cardExpanded?true:false,
+                      visible: content.recipientCardExpanded?true:false,
                       child: Align(
                         alignment: Alignment.bottomCenter,
                         child: Divider(color: Colors.grey,),
@@ -498,17 +543,25 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
 
                     Align(
                         alignment: Alignment.centerLeft,
-                        child: content.cardExpanded?
+                        child: content.recipientCardExpanded?
                             IconButton(
                               icon: Icon(Icons.arrow_drop_down,color: Colors.grey,),
                               onPressed: (){
-                                vm.recipientCardIconClick(index);
+                                setState(() {
+                                  content.recipientCardExpanded = !content.recipientCardExpanded;
+                                });
+                                changeRecipientSizedBoxHeight();
+                                //vm.recipientCardIconClick(index);
                               },
                             )
                             :IconButton(
                              icon: Icon(Icons.arrow_drop_up,color: Colors.grey,),
                           onPressed: (){
-                             vm.recipientCardIconClick(index);
+                            setState(() {
+                              content.recipientCardExpanded = !content.recipientCardExpanded;
+                            });
+                            changeRecipientSizedBoxHeight();
+                             //vm.recipientCardIconClick(index);
                           },
                         )
                     ),
@@ -526,7 +579,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                 ),
               ),
               Visibility(
-                visible: content.cardExpanded,
+                visible: content.recipientCardExpanded,
                 child: Column(
                   children: <Widget>[
                     Container(
@@ -586,7 +639,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                             child: Container(
                               margin: EdgeInsets.only(bottom: 15),
                               child: Text(
-                                content.deliveryLocationTextController.text,
+                                content.recipientDeliveryLocation,
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w700
@@ -598,7 +651,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                       ),
                     ),
                     Visibility(
-                      visible:content.deliveryInstructionController.text.isNotEmpty ,
+                      visible:content.recipientDeliveryInstruction.isNotEmpty ,
                       child: Container(
                         height: 60,
                         margin: EdgeInsets.only(left:10,right:10,top: 15),
@@ -622,7 +675,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
                               child: Container(
                                 margin: EdgeInsets.only(bottom: 15),
                                 child: Text(
-                                  content.deliveryInstructionController.text,
+                                  content.recipientDeliveryInstruction,
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700
@@ -645,11 +698,11 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
     }
 
     final recipientList = SizedBox(
-        height: vm.orderSummaryRecipientsSizedBoxHeight,
+        height: recipientSizedBoxHeight,//vm.orderSummaryRecipientsSizedBoxHeight,
         child:  ListView.builder(
-          itemCount: vm.recipientList.length,
+          itemCount: vm2.recipientsDetails.length,
           itemBuilder: (context,index){
-            return recipientDataListItem(vm.recipientList[index],index);
+            return recipientDataListItem(vm2.recipientsDetails[index],index);
           },
           physics: ClampingScrollPhysics(),
         )
@@ -662,58 +715,31 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Expanded(
-            child: ButtonTheme(
+            child: CustomButton(
+              title: "Previous",
+              onPressed: (){
+                Navigator.pop(context);
+              },
               height: 50,
-              child: RaisedButton(
-                color: Colors.amber[900],
-                child: Text(
-                  "Previous",
-                  style: TextStyle(
-                    color: Colors.white
-                  ),
-                ),
-                onPressed: (){
-                  Navigator.pop(context);
-                },
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                        color: Colors.amber[900],
-                        width: 1,
-                        style: BorderStyle.solid),
-                    borderRadius: BorderRadius.circular(5)),
-              ),
-            ),
+            )
+            
           ),
           SizedBox(width: 10,),
           Expanded(
-            child: ButtonTheme(
+            child: CustomButton(
               height: 50,
-              child: RaisedButton(
-                color: Colors.amber[900],
-                child: Text(
-                  "Next",
-                  style: TextStyle(
-                      color: Colors.white
-                  ),
-                ),
-                onPressed: (){
-                  vm.totalDistanceTravelled(context);
-                  //router.navigateTo(AppRoutes.paymentScreenRoute);
-                },
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(
-                        color: Colors.amber[900],
-                        width: 1,
-                        style: BorderStyle.solid),
-                    borderRadius: BorderRadius.circular(5)),
-              ),
-            ),
+              title:"Next",
+              onPressed: (){
+                 vm2.totalDistanceTravelled(context);
+              },
+
+            )
+            
           )
         ],
       ),
     );
 
-    // TODO: implement build
      return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -735,6 +761,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
           itemBuilder:(context,index){
             return Column(
               children: <Widget>[
+                itemImage,
                 carrierDetails,
                 senderDetails,
                 recipientList,
@@ -746,6 +773,22 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen>{
         )
       )
     );
+  }
+
+  void changeRecipientSizedBoxHeight(){
+    double closedHeight = 100.00;
+    double expandedHeight = 300.00;
+    double totalHeight = 0;
+    for(int y=0;y<vm2.recipientsDetails.length;y++){
+      if(vm2.recipientsDetails[y].recipientCardExpanded == true){
+        totalHeight = totalHeight + expandedHeight;
+      }else{
+        totalHeight = totalHeight + closedHeight;
+      }
+    }
+    setState(() {
+      recipientSizedBoxHeight = totalHeight;
+    });
   }
 
 }

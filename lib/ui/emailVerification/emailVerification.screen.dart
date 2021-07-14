@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pickappuser/constants/images.dart';
 import 'package:pickappuser/providers/emailVerificationProvider.dart';
+import 'package:pickappuser/ui/shared/customButton.dart';
 import 'package:pickappuser/ui/shared/myTextInput.dart';
 import 'package:provider/provider.dart';
 
@@ -15,9 +16,11 @@ class _EmailVerificationState extends State<EmailVerificationScreen>{
   @override
   Widget build(BuildContext context) {
     final vm = Provider.of<EmailVerificationProvider>(context);
+    // ignore: non_constant_identifier_names
     double device_width = MediaQuery.of(context).size.width;
+    // ignore: non_constant_identifier_names
     double device_height = MediaQuery.of(context).size.height;
-    // TODO: implement build
+  
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -68,28 +71,17 @@ class _EmailVerificationState extends State<EmailVerificationScreen>{
                 width: 300,
                 margin: EdgeInsets.only(top:10),
                 child: Center(
-                  child: ButtonTheme(
-                    minWidth: 300,
+                  child: CustomButton(
+                    setWidth: true,
+                    width: 300,
                     height: 50,
-                    child: RaisedButton(
-                      color: Colors.amber[900],
-                        child: Text(
-                          "Verify",
-                          style: TextStyle(
-                              color: Colors.white
-                          ),
-                        ),
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: Colors.amber[900],
-                                width: 1,
-                                style: BorderStyle.solid),
-                            borderRadius: BorderRadius.circular(5)),
-                        onPressed: (){
-                          print("Email verification code");
-                        },
-                      ),
-                  ),
+                    title:"Verify",
+                    onPressed: (){
+                       print("Email verification code");
+                    },
+                  )
+                  
+                  
                 ),
               )
             ],
